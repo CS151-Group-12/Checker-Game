@@ -1,155 +1,192 @@
+package View;
+
+import Message.*;
+import Model.*;
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.geom.Point2D;
+import java.awt.event.*;
 import java.util.ArrayList;
+import java.util.concurrent.BlockingQueue;
 
 import javax.swing.JPanel;
 
-/**
- * @author Justin Lo
- */
-public class BoardPanel extends JPanel implements MouseListener  {
-	Tile[][] testboard ;
-
-	public BoardPanel (){
-		testboard = new Tile [8][8];
-
-		for(int i=0;i<testboard.length;i++) {
-			for(int j=0;j<testboard.length;j++) {
-				Point p= new Point ((75*i)+50,(75*j)+1);
+public class BoardPanel extends JPanel implements MouseListener {
+	private Tile[][] board;
+	private BlockingQueue<Message> messageQueue;
+	private GameInfo gameInfo;
+	private Point p;
 
 
-				if(i%2==0 &&j%2!=0) 
-					testboard[i][j]= new Tile(p, Color.LIGHT_GRAY, 75,false,"NONE");
+	/**
+	 * Constructor
+	 * @param queue
+	 */
+	public BoardPanel(BlockingQueue<Message> queue) {
+		messageQueue = queue;
+		board = new Tile[8][8];
+		updateBoard(board);
+		addMouseListener(this);
+	}
 
-				else if(i%2!=0&&j%2==0) 
-					testboard[i][j]= new Tile(p, Color.LIGHT_GRAY, 75,false,"NONE"); //true/false determines highlight
+	/**
+	 * Update the Board
+	 * @param board
+	 */
+	public void updateBoard(Tile[][] board) {
+		for (int i = 0; i < 8; i++) {
+			for (int j = 0; j < 8; j++) {
+				p = new Point((75 * i) + 50, (75 * j) + 1);
+				boolean b = (i % 2 != 0 && j % 2 == 0) || (i % 2 == 0 && j % 2 != 0);
 
-				else 
-					testboard[i][j]= new Tile(p, Color.WHITE, 75,false,"NONE");
-				
+				char col = (char) (i + 65);
+
+				if (j >= 5 && b)
+					board[i][j] = new Tile(j, col, p, Color.LIGHT_GRAY, 75, false, PieceType.BLACKPIECE); //true/false determines highlight
+				else if (j < 3 && b)
+					board[i][j] = new Tile(j, col, p, Color.LIGHT_GRAY, 75, false, PieceType.REDPIECE);
+				else {
+					if (b)
+						board[i][j] = new Tile(j, col, p, Color.LIGHT_GRAY, 75, false, PieceType.NONE); //true/false determines highlight
+					else
+						board[i][j] = new Tile(j, col, p, Color.WHITE, 75, false, PieceType.NONE);
+				}
 			}
-			
-		}
-
-	}
-
-	public void highlightSquares(ArrayList <Point> squares) {
-		for(Point p:squares) {
-			testboard[p.x][p.y].setHighlight(true);
 		}
 	}
 
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		try {
+			System.out.println("View clicked");
+			p = e.getPoint();
+			if (e.getPoint().x >= 50 && e.getPoint().y >= 1) {
+				int x = (e.getPoint().x - 50) / 75;
+				int y = (e.getPoint().y - 1) / 75;
+
+//				System.out.println(x + " " + y);
+//				if (x < 8 && y < 8) {
+//					board[x][y].setHighlight(!board[x][y].getHighlight());
+//				}
+			}
+			messageQueue.put(new ShowHighlightMessage());
+			System.out.println("Controller?");
+		} catch (InterruptedException exception) {
+			System.out.println("Failed controller");
+			exception.printStackTrace();
+		}
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+
+	}
+
+	/**
+	 *
+	 * @param gameInfo
+	 */
+	public void setBoardPanel(GameInfo gameInfo) {
+		this.gameInfo = gameInfo;
+		board = gameInfo.getBoard();
+//		updateBoard(gameInfo);
+		System.out.println("View update the new board with highlight");
+		repaint();
+		System.out.println();
+	}
+
+	/**
+	 *
+	 * @param squares
+	 */
+	public void highlightSquares(ArrayList<Point> squares) {
+		for (Point p : squares) {
+			board[p.x][p.y].setHighlight(true);
+		}
+	}
+
+	/**
+	 *
+	 * @param p
+	 * @return
+	 */
 	public Point getCenter(Point p) {
-		int x = p.x-(25/2);
-		int y = p.y-(25/2);
+		int x = p.x - (25 / 2);
+		int y = p.y - (25 / 2);
 
-		return new Point(x,y);
+		return new Point(x, y);
 	}
 
 	@Override
-	public Dimension getPreferredSize() {
-		return new Dimension(600,700);
-	}
-
-	@Override
-	public void paintComponent(Graphics g){
-
+	public void paintComponent(Graphics g) {
 		Graphics2D g2 = (Graphics2D) g;
 		g2.setColor(Color.WHITE);
 
 		g2.fillRect(0, 0, 3000, 3000);
 
 		g2.setColor(Color.BLACK);
-		// g2.drawLine(0, 1, 3000,1);
 
 		//Drawing the Board
-		for(int i=0;i<testboard.length;i++) {
-			for(int j=0;j<testboard.length;j++) {
-				//				System.out.println(i);
-				//				System.out.println(j);
-				testboard[i][j].draw(g2);
+		for (int i = 0; i < board.length; i++) {
+			for (int j = 0; j < board[i].length; j++) {
+				board[i][j].draw(g2);
+				System.out.println(board[i][j]);
+				board[i][j].addMouseListener(this);
 			}
 		}
 
 		//Drawing the Integers
 		g2.setColor(Color.DARK_GRAY);
-		Font font = new Font("integerfont",Font.BOLD,24);
+		Font font = new Font("integerfont", Font.BOLD, 24);
 		g2.setFont(font);
 		g2.drawRect(50, 1, 600, 600);
-		for(int x=1;x<9;x++) {
+		for (int x = 8; x >= 1; x--) {
 			g2.setColor(Color.BLACK);
-			g2.drawString(Integer.toString(x), 15, (x*75)-25);
+			g2.drawString(Integer.toString(x), 15, (x * 75) - 25);
 
 		}
 
 		//Drawing the Letters
-		int ascciHvalue =64;
-		for(int x=1;x<9;x++) {
+		int ascciHvalue = 64;
+		for (int x = 1; x < 9; x++) {
 			g2.setColor(Color.BLACK);
-			g2.drawString( ""+(char) (ascciHvalue+x), (x*75)+5, 635);
+			g2.drawString("" + (char) (ascciHvalue + x), (x * 75) + 5, 635);
 		}
-
-		//Drawing the pieces
-
 	}
 
-	@Override
-	public void mouseClicked(MouseEvent e) {
-		// TODO Auto-generated method stub
-
-	}
-	@Override
-	public void mousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
-
-	}
-	@Override
-	public void mouseReleased(MouseEvent e) {
-		// TODO Auto-generated method stub
-
-	}
-	@Override
-	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
-
-	}
-	@Override
-	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
-
-	}
-	public void changePiece(Point p) {
-		testboard[p.x][p.y].setStatus("BLACKKING");
-		this.repaint();
-	}
+	/**
+	 * Refresh the Board
+	 */
 	public void refresh() {
-		
-		for(int i=0;i<testboard.length;i++) {
-			for(int j=0;j<testboard.length;j++) {
-				
-				if(j<3) {
-					if(i%2==0 &&j%2!=0 ||i%2!=0&&j%2==0) {
-						testboard[i][j].setStatus("REDPIECE");
-					}
-				}
-				if(j>4) {
-					if(i%2==0 &&j%2!=0 ||i%2!=0&&j%2==0) {
-						testboard[i][j].setStatus("BLACKPIECE");
-					}
-				}
-
-					
+		for (int i = 0; i < board.length; i++) {
+			for (int j = 0; j < board.length; j++) {
+				boolean b = i % 2 == 0 && j % 2 != 0 || i % 2 != 0 && j % 2 == 0;
+				Point p = new Point((75 * i) + 50, (75 * j) + 1);
+				char col = (char) (i + 65);
+				if (j < 3 && b)
+					board[i][j] = new Tile(j, col, p, Color.LIGHT_GRAY, 75, false, PieceType.REDPIECE); //true/false determines highlight
+				if (j > 4 && b) board[i][j] = new Tile(j, col, p, Color.LIGHT_GRAY, 75, false, PieceType.BLACKPIECE);
 			}
 		}
 		this.repaint();
 	}
-
-
 }
