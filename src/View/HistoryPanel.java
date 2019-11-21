@@ -14,6 +14,7 @@ import java.util.concurrent.BlockingQueue;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -26,6 +27,7 @@ public class HistoryPanel extends JPanel {
 	//set up player turn
 	//set up reset game
 	BlockingQueue<Message> messageQueue;
+	private DefaultListModel lm;
 
 	private GameInfo gameInfo;
 
@@ -43,7 +45,8 @@ public class HistoryPanel extends JPanel {
 		this.gameInfo = gameInfo;
 	}
 
-	public void initPanel() {
+	public void initPanel() {	
+		lm = new DefaultListModel();
 		BoxLayout by = new BoxLayout(this, BoxLayout.Y_AXIS);
 		this.setLayout(by);
 		this.setBorder(BorderFactory.createMatteBorder(1, 0, 1, 1, Color.BLACK));
@@ -64,8 +67,9 @@ public class HistoryPanel extends JPanel {
 		JPanel ButtonContainer = new JPanel();
 		ButtonContainer.setLayout(new GridLayout(1, 2));
 
-		undo.addActionListener(e -> System.out.println("undo"));
+		undo.addActionListener(e -> System.out.println(gameInfo.getMoveList().toString()));
 		redo.addActionListener(e -> System.out.println("redo"));
+
 
 		ButtonContainer.add(undo);
 		ButtonContainer.add(redo);
@@ -95,12 +99,20 @@ public class HistoryPanel extends JPanel {
 		UndoRedo.add(ButtonContainer);
 
 		JList list = new JList();
+		list.setModel(lm);
+		
+		lm.addElement("testing");
+		lm.addElement("testing");
+		lm.addElement("testing");
+		lm.addElement("testing");
+		lm.addElement("testing");
+		
 		//list.setBackground(Color.GREEN);
 		list.setPreferredSize(new Dimension(200, 500));
 		//JList list = new JList(listModel);
 		//PeopleRenderer Render = new PeopleRenderer();
 		//list.setCellRenderer(Render);
-		list.setFixedCellHeight(100);
+		list.setFixedCellHeight(50);
 		list.setFixedCellWidth(200);
 		this.add(list);
 	}

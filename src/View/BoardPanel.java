@@ -61,6 +61,11 @@ public class BoardPanel extends JPanel implements MouseListener {
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
+
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
 		try {
 			System.out.println("View clicked");
 			p = e.getPoint();
@@ -79,11 +84,6 @@ public class BoardPanel extends JPanel implements MouseListener {
 			System.out.println("Failed controller");
 			exception.printStackTrace();
 		}
-	}
-
-	@Override
-	public void mousePressed(MouseEvent e) {
-
 	}
 
 	@Override
