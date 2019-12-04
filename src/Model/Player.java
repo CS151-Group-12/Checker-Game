@@ -5,4 +5,9 @@ package Model;
  */
 public class Player {
 
+    boolean isTurn;
+
+    Player() {
+        isTurn = false;
+    }
 }

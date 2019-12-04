@@ -13,10 +13,16 @@ public class CheckersPiece {
 	private boolean king;
 	private Color outer;
 	private Color inner;
+	int row, col;
+//	char col;
+	private PieceType pieceType;
 
-	public CheckersPiece(Point p, Boolean red, Boolean king) {
+	public CheckersPiece(int row, int col, Point p, Boolean red, Boolean king, PieceType pieceType) {
 		this.p = p;
 		this.king = king;
+		this.row = row;
+		this.col = col;
+
 		if (red) {
 			outer = Color.RED;
 			inner = new Color(196, 46, 20);
@@ -24,13 +30,43 @@ public class CheckersPiece {
 			outer = Color.BLACK;
 			inner = new Color(74, 72, 72);
 		}
+
+		this.pieceType = pieceType;
+	}
+
+	public int getRow() {
+		return row;
+	}
+
+	public PieceType getPieceType() {
+		if (king) {
+			if (outer == Color.RED) {
+				pieceType = PieceType.REDKING;
+			} else {
+				pieceType =  PieceType.BLACKKING;
+			}
+		} else {
+			if (outer == Color.RED) {
+				pieceType = PieceType.REDPIECE;
+			} else {
+				pieceType = PieceType.BLACKPIECE;
+			}
+		}
+		return pieceType;
+	}
+
+	public void setPieceType(PieceType pt) {
+		pieceType = pt;
+	}
+
+	public int getCol() {
+		return col;
 	}
 
 	public void draw(Graphics2D g2) {
 		g2.setColor(Color.GREEN);
 		Ellipse2D.Double Circle = new Ellipse2D.Double(p.x + 2, p.y + 2, 71, 71);
 		Ellipse2D.Double Circle2 = new Ellipse2D.Double(p.x + 7, p.y + 7, 61, 61);
-
 
 		g2.setColor(outer);
 		g2.fill(Circle);
@@ -68,7 +104,8 @@ public class CheckersPiece {
 
 	@Override
 	public String toString() {
-		return super.toString();
+		return "Row: " + row + " - Col " + col + " - piecetype: " +
+				pieceType;
 	}
 }
 

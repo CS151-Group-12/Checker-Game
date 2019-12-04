@@ -4,50 +4,49 @@ import javax.swing.*;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 
 // will contain UI and logic for each tile square
 public class Tile extends JComponent {
-	private int row;
-	private char col;
+	private int row, col;
 	private Point coords;
 	private Color tileColor;
 	private int size;
 	private boolean highlight;
 	private CheckersPiece cp;
-	private PieceType s2;
+	private PieceType s;
 
-	public Tile(int row, char col, Point p, Color c, int Size, boolean Highlight, PieceType s) {
-		coords = p;
+	public Tile(int row, int col, Color c, int Size, boolean Highlight, PieceType s) {
+		coords = new Point((75 * col) + 50, (75 * row) + 1);;
 		tileColor = c;
 		size = Size;
 		highlight = Highlight;
 		this.row = row;
 		this.col = col;
-		setStatus(s);
+		this.s = s;
+		setCurrentCheckerPiece();
 	}
 
-	public void setStatus(PieceType s) {
-		s2 = s;
-	}
-
-//	public CheckersPiece getPieceImage() {
-//		try {
-//			return cp.clone();
-//		} catch (CloneNotSupportedException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//		return null;
-//	}
-
-	private class MousePressedListener extends MouseAdapter {
-		@Override
-		public void mousePressed(MouseEvent e) {
-			System.out.println("test");
-
+	void setCurrentCheckerPiece() {
+		switch (s) {
+			case BLACKPIECE:
+				cp = new CheckersPiece(row, col, coords, false, false, PieceType.BLACKPIECE);
+				break;
+			case BLACKKING:
+				cp = new CheckersPiece(row, col, coords, false, true, PieceType.BLACKKING);
+				break;
+			case REDPIECE:
+				cp = new CheckersPiece(row, col, coords, true, false, PieceType.REDPIECE);
+				break;
+			case REDKING:
+				cp = new CheckersPiece(row, col, coords, true, true, PieceType.REDKING);
+				break;
+			case NONE:
+				break;
 		}
+	}
+
+	public void setCheckerPiece(CheckersPiece cp) {
+		this.cp = cp;
 	}
 
 	public void setHighlight(Boolean b) {
@@ -62,7 +61,6 @@ public class Tile extends JComponent {
 	public void draw(Graphics2D g2) {
 
 		g2.setColor(tileColor);
-//		System.out.println(tilerColor);x
 		g2.fillRect(coords.x, coords.y, size, size);
 
 		if (highlight) {
@@ -70,44 +68,8 @@ public class Tile extends JComponent {
 			g2.fillRect(coords.x + 5, coords.y + 5, size - 10, size - 10);
 		}
 
-		switch (s2) {
-			case BLACKPIECE:
-				cp = new CheckersPiece(coords, false, false);
-				cp.draw(g2);
-				break;
-			case BLACKKING:
-				cp = new CheckersPiece(coords, false, true);
-				cp.draw(g2);
-				break;
-			case REDPIECE:
-				cp = new CheckersPiece(coords, true, false);
-				cp.draw(g2);
-				break;
-			case REDKING:
-				cp = new CheckersPiece(coords, true, true);
-				cp.draw(g2);
-				break;
-			case NONE:
-				break;
-
-		}
-
-	}
-	// used to find the location of pieces on the board
-	public void getStatus(){
-
-	}
-	// used to find the possible moves
-	public boolean getHighlight() {
-		return false;
-	}
-	// used to find out whether the tile has an existing checker piece in it
-	// can handle killing here
-	public void containsPiece(){
-
-	}
-	// used to set the color of the tile depending on whether a checker piece can be moved there or not
-	public void tileColor(){
+		if (s != PieceType.NONE)
+			cp.draw(g2);
 
 	}
 
@@ -115,16 +77,34 @@ public class Tile extends JComponent {
 		return cp;
 	}
 
+	public PieceType getCheckerPieceType() {
+		if (cp != null)
+			return cp.getPieceType();
+		return null;
+	}
+
+	public void setCheckerPieceType(PieceType pt) {
+		cp.setPieceType(pt);
+	}
+
 	public Color getTileColor() {
 		return tileColor;
 	}
 
-	public PieceType getS2() {
-		return s2;
+	public PieceType getS() {
+		return s;
 	}
 
 	public Point getCoords() {
 		return coords;
+	}
+
+	public int getRow() {
+		return row;
+	}
+
+	public int getCol() {
+		return col;
 	}
 
 	public boolean isHighlight() {
@@ -133,20 +113,10 @@ public class Tile extends JComponent {
 
 	@Override
 	public String toString() {
-
-		int newRow = row + 1;
-		return "Pos: " + col + newRow + " - "
+		return "[Tile Object] Col = " + col + " Row = " + row
+				+ " - "
 				+ "Highlight: " + highlight + " - "
 				+ "Piece: " + cp + " - "
-				+ "Type: " + s2;
+				+ "Type: " + s;
 	}
-
-	//	   public boolean contains(Point2D p)
-//	   {
-//	      return x <= p.getX() && p.getX() <= x + width 
-//	         && y <= p.getY() && p.getY() <= y + width / 2;
-//	   }
-	//need coordinates
-
-	//need highlight/black/black king/red king/none/
 }

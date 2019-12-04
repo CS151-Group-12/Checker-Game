@@ -4,7 +4,6 @@ import Message.*;
 import Model.*;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -28,35 +27,7 @@ public class BoardPanel extends JPanel implements MouseListener {
 	 */
 	public BoardPanel(BlockingQueue<Message> queue) {
 		messageQueue = queue;
-		board = new Tile[8][8];
-		updateBoard(board);
 		addMouseListener(this);
-	}
-
-	/**
-	 * Update the Board
-	 * @param board
-	 */
-	public void updateBoard(Tile[][] board) {
-		for (int i = 0; i < 8; i++) {
-			for (int j = 0; j < 8; j++) {
-				p = new Point((75 * i) + 50, (75 * j) + 1);
-				boolean b = (i % 2 != 0 && j % 2 == 0) || (i % 2 == 0 && j % 2 != 0);
-
-				char col = (char) (i + 65);
-
-				if (j >= 5 && b)
-					board[i][j] = new Tile(j, col, p, Color.LIGHT_GRAY, 75, false, PieceType.BLACKPIECE); //true/false determines highlight
-				else if (j < 3 && b)
-					board[i][j] = new Tile(j, col, p, Color.LIGHT_GRAY, 75, false, PieceType.REDPIECE);
-				else {
-					if (b)
-						board[i][j] = new Tile(j, col, p, Color.LIGHT_GRAY, 75, false, PieceType.NONE); //true/false determines highlight
-					else
-						board[i][j] = new Tile(j, col, p, Color.WHITE, 75, false, PieceType.NONE);
-				}
-			}
-		}
 	}
 
 	@Override
@@ -67,19 +38,32 @@ public class BoardPanel extends JPanel implements MouseListener {
 	@Override
 	public void mousePressed(MouseEvent e) {
 		try {
-			System.out.println("View clicked");
 			p = e.getPoint();
 			if (e.getPoint().x >= 50 && e.getPoint().y >= 1) {
 				int x = (e.getPoint().x - 50) / 75;
 				int y = (e.getPoint().y - 1) / 75;
 
-//				System.out.println(x + " " + y);
-//				if (x < 8 && y < 8) {
-//					board[x][y].setHighlight(!board[x][y].getHighlight());
-//				}
+				if (x < 8 && y < 8) {
+					// If click on highlight square => move
+					Tile tile = board[y][x];
+					CheckersPiece currentPiece = tile.getCp();
+
+					// Check if user already click a piece
+					if (gameInfo.getSelectedPiece() != null) {
+						// click a new tile that has a checker => turn off the highglight
+						if (tile.containsChecker()) {
+							messageQueue.put(new ShowHighlightMessage(currentPiece));
+						} else {
+							// Click a new tile that doensn't have a checker -> move the piece
+							messageQueue.put(new MoveMessage(gameInfo.getSelectedPiece(), tile));
+						}
+					}
+					// If user is a firstClick => show highlight of that piece
+					else {
+						messageQueue.put(new ShowHighlightMessage(currentPiece));
+					}
+				}
 			}
-			messageQueue.put(new ShowHighlightMessage());
-			System.out.println("Controller?");
 		} catch (InterruptedException exception) {
 			System.out.println("Failed controller");
 			exception.printStackTrace();
@@ -108,10 +92,7 @@ public class BoardPanel extends JPanel implements MouseListener {
 	public void setBoardPanel(GameInfo gameInfo) {
 		this.gameInfo = gameInfo;
 		board = gameInfo.getBoard();
-//		updateBoard(gameInfo);
-		System.out.println("View update the new board with highlight");
 		repaint();
-		System.out.println();
 	}
 
 	/**
@@ -146,13 +127,15 @@ public class BoardPanel extends JPanel implements MouseListener {
 		g2.setColor(Color.BLACK);
 
 		//Drawing the Board
-		for (int i = 0; i < board.length; i++) {
-			for (int j = 0; j < board[i].length; j++) {
-				board[i][j].draw(g2);
-				System.out.println(board[i][j]);
-				board[i][j].addMouseListener(this);
+		if (board != null) {
+			for (int i = 0; i < board.length; i++) {
+				for (int j = 0; j < board[i].length; j++) {
+					board[i][j].draw(g2);
+					board[i][j].addMouseListener(this);
+				}
 			}
 		}
+
 
 		//Drawing the Integers
 		g2.setColor(Color.DARK_GRAY);
@@ -161,32 +144,14 @@ public class BoardPanel extends JPanel implements MouseListener {
 		g2.drawRect(50, 1, 600, 600);
 		for (int x = 8; x >= 1; x--) {
 			g2.setColor(Color.BLACK);
-			g2.drawString(Integer.toString(x), 15, (x * 75) - 25);
-
+			g2.drawString(Integer.toString(x - 1), 15, (x * 75) - 25);
 		}
 
 		//Drawing the Letters
-		int ascciHvalue = 64;
+//		int ascciHvalue = 64;
 		for (int x = 1; x < 9; x++) {
 			g2.setColor(Color.BLACK);
-			g2.drawString("" + (char) (ascciHvalue + x), (x * 75) + 5, 635);
+			g2.drawString("" + (x - 1), (x * 75) + 5, 635);
 		}
-	}
-
-	/**
-	 * Refresh the Board
-	 */
-	public void refresh() {
-		for (int i = 0; i < board.length; i++) {
-			for (int j = 0; j < board.length; j++) {
-				boolean b = i % 2 == 0 && j % 2 != 0 || i % 2 != 0 && j % 2 == 0;
-				Point p = new Point((75 * i) + 50, (75 * j) + 1);
-				char col = (char) (i + 65);
-				if (j < 3 && b)
-					board[i][j] = new Tile(j, col, p, Color.LIGHT_GRAY, 75, false, PieceType.REDPIECE); //true/false determines highlight
-				if (j > 4 && b) board[i][j] = new Tile(j, col, p, Color.LIGHT_GRAY, 75, false, PieceType.BLACKPIECE);
-			}
-		}
-		this.repaint();
 	}
 }

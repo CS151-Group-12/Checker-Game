@@ -24,7 +24,8 @@ public class Controller {
         this.view = view;
         this.model = model;
         this.queue = queue;
-        model.start();
+        this.model.start();
+        updateGame("INIT_BOARD");
         addAllValves();
     }
 
@@ -120,8 +121,16 @@ public class Controller {
             }
 
             // Model
-            model.movePiece();
+            Move move = new Move(message.getCp1().getRow(), message.getCp1().getCol(),
+                    message.getTileToMove().getRow(), message.getTileToMove().getCol());
 
+            // Make a move.
+
+//            System.out.println("Selected Piece to move: " + message.getCp1());
+//            System.out.println("Piece position to move" + message.getTileToMove());
+            model.doMakeMove(move);
+
+            // Next Player to Act
             updateGame("MOVE");
 
             return ValveResponse.EXECUTED;
@@ -131,19 +140,14 @@ public class Controller {
     private class ShowHighlightValve implements Valve {
         public ValveResponse execute(Message message) {
             if (message.getClass() != ShowHighlightMessage.class) {
-                System.out.println("Controller set highlight failed");
                 return ValveResponse.MISS;
             }
-            System.out.println("Controller set highlight");
-
             // Model
-            model.showHighlight();
+            model.showHighlight(message.getCp1());
 
             updateGame("HIGHLIGHT");
 
             return ValveResponse.EXECUTED;
         }
     }
-
-
 }
