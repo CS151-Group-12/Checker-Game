@@ -24,7 +24,7 @@ public class Controller {
         this.view = view;
         this.model = model;
         this.queue = queue;
-        model.start();
+        this.model.start();
         addAllValves();
     }
 
@@ -131,13 +131,11 @@ public class Controller {
     private class ShowHighlightValve implements Valve {
         public ValveResponse execute(Message message) {
             if (message.getClass() != ShowHighlightMessage.class) {
-                System.out.println("Controller set highlight failed");
                 return ValveResponse.MISS;
             }
-            System.out.println("Controller set highlight");
 
             // Model
-            model.showHighlight();
+            model.showHighlight(4,4);
 
             updateGame("HIGHLIGHT");
 

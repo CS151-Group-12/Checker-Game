@@ -73,10 +73,10 @@ public class BoardPanel extends JPanel implements MouseListener {
 				int x = (e.getPoint().x - 50) / 75;
 				int y = (e.getPoint().y - 1) / 75;
 
-//				System.out.println(x + " " + y);
-//				if (x < 8 && y < 8) {
-//					board[x][y].setHighlight(!board[x][y].getHighlight());
-//				}
+				System.out.println(x + " " + y);
+				if (x < 8 && y < 8) {
+					board[x][y].setHighlight(!board[x][y].getHighlight());
+				}
 			}
 			messageQueue.put(new ShowHighlightMessage());
 			System.out.println("Controller?");

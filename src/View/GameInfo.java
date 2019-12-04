@@ -11,7 +11,7 @@ public class GameInfo {
 
 
     private ArrayList<Player> playerList;
-    private ArrayList<Moves> moveList;
+    private ArrayList<Move> moveList;
     private Tile[][] board;
 
     /**
@@ -29,7 +29,7 @@ public class GameInfo {
         return playerList;
     }
 
-    public ArrayList<Moves> getMoveList() {
+    public ArrayList<Move> getMoveList() {
         return moveList;
     }
     public Tile[][] getBoard() {
