@@ -72,19 +72,19 @@ public class Tile extends JComponent {
 
 		switch (s2) {
 			case BLACKPIECE:
-				cp = new CheckersPiece(coords, false, false);
+				cp = new CheckersPiece(row, col, coords, false, false);
 				cp.draw(g2);
 				break;
 			case BLACKKING:
-				cp = new CheckersPiece(coords, false, true);
+				cp = new CheckersPiece(row, col, coords, false, true);
 				cp.draw(g2);
 				break;
 			case REDPIECE:
-				cp = new CheckersPiece(coords, true, false);
+				cp = new CheckersPiece(row, col, coords, true, false);
 				cp.draw(g2);
 				break;
 			case REDKING:
-				cp = new CheckersPiece(coords, true, true);
+				cp = new CheckersPiece(row, col, coords, true, true);
 				cp.draw(g2);
 				break;
 			case NONE:
@@ -143,7 +143,7 @@ public class Tile extends JComponent {
 
 	//	   public boolean contains(Point2D p)
 //	   {
-//	      return x <= p.getX() && p.getX() <= x + width 
+//	      return x <= p.getX() && p.getX() <= x + width
 //	         && y <= p.getY() && p.getY() <= y + width / 2;
 //	   }
 	//need coordinates

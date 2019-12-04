@@ -68,8 +68,8 @@ public class MainFrame extends JFrame {
         //Adding The CenterPanel
         JPanel center = new JPanel();
         center.setLayout(new BorderLayout());
-//        BoxLayout by = new BoxLayout(center, BoxLayout.Y_AXIS);
-//        center.setLayout(by);
+        BoxLayout by = new BoxLayout(center, BoxLayout.Y_AXIS);
+        center.setLayout(by);
         center.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         center.setBackground(Color.WHITE);
 
@@ -82,36 +82,7 @@ public class MainFrame extends JFrame {
         header.setPreferredSize(new Dimension(WIDTH, 50));
 
         // Add Board Panel and Header to Center Panel
-        
-        
-        JPanel topbox = new JPanel();
-        topbox.setLayout(new BorderLayout());
-        
-        topbox.setPreferredSize(new Dimension(WIDTH,50));
-        topbox.setBackground(Color.WHITE);
-        topbox.add(header,BorderLayout.WEST);
-        
-        JButton newGame = new JButton("New Game");
-        newGame.setPreferredSize(new Dimension(120,20));
-        String[] options = { "No", "Yes" };
-        
-        newGame.addActionListener(e -> {
-        	int x = JOptionPane.showOptionDialog(null, "Start a new game?", " ", JOptionPane.DEFAULT_OPTION,
-    				JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
-        	
-        	if (x == 1) 
-				System.out.println("start a new game");
-			
-        
-        		
-        	
-        });
-        
-        topbox.add(newGame, BorderLayout.EAST);
-        center.add(topbox,BorderLayout.NORTH);
-       // center.add(header);
-        
-        
+        center.add(header);
         center.add(boardPanel);
         this.add(center, BorderLayout.CENTER);
 
@@ -126,22 +97,22 @@ public class MainFrame extends JFrame {
         historyPanel.setHistoryPanel(gameInfo);
     }
 
-    /**
-     *
-     */
-    private void TestBoard() {
-        // TODO Auto-generated method stub
-        ArrayList<Point> highlights = new ArrayList<>();
-        highlights.add(new Point(3, 4));
-        highlights.add(new Point(4, 5));
-        highlights.add(new Point(5, 4));
-        highlights.add(new Point(2, 1));
-
-        boardPanel.refresh();
+//    /**
+//     *
+//     */
+//    private void TestBoard() {
+//        // TODO Auto-generated method stub
+//        ArrayList<Point> highlights = new ArrayList<>();
+//        highlights.add(new Point(3, 4));
+//        highlights.add(new Point(4, 5));
+//        highlights.add(new Point(5, 4));
+//        highlights.add(new Point(2, 1));
+//
+////        boardPanel.refresh();
 //        boardPanel.changePiece(new Point(0, 5));
-
-        //bp.changePiece();
-        boardPanel.highlightSquares(highlights);
-
-    }
+//
+//        //bp.changePiece();
+//        boardPanel.highlightSquares(highlights);
+//
+//    }
 }

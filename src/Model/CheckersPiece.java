@@ -13,10 +13,15 @@ public class CheckersPiece {
 	private boolean king;
 	private Color outer;
 	private Color inner;
+	int row;
+	char col;
 
-	public CheckersPiece(Point p, Boolean red, Boolean king) {
+	public CheckersPiece(int row, char col, Point p, Boolean red, Boolean king) {
 		this.p = p;
 		this.king = king;
+		this.row = row;
+		this.col = col;
+
 		if (red) {
 			outer = Color.RED;
 			inner = new Color(196, 46, 20);
@@ -24,6 +29,14 @@ public class CheckersPiece {
 			outer = Color.BLACK;
 			inner = new Color(74, 72, 72);
 		}
+	}
+
+	public int getRow() {
+		return row;
+	}
+
+	public char getCol() {
+		return col;
 	}
 
 	public void draw(Graphics2D g2) {

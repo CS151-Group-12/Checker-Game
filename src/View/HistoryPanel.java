@@ -1,6 +1,7 @@
 package View;
 
 import Message.Message;
+import Model.Move;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -8,8 +9,6 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.concurrent.BlockingQueue;
 
 import javax.swing.BorderFactory;
@@ -19,7 +18,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
-import javax.swing.SwingConstants;
+import javax.swing.border.Border;
 
 public class HistoryPanel extends JPanel {
 	//set up back and forth arrows
@@ -27,7 +26,7 @@ public class HistoryPanel extends JPanel {
 	//set up player turn
 	//set up reset game
 	BlockingQueue<Message> messageQueue;
-	private DefaultListModel lm;
+	private DefaultListModel<String> lm;
 
 	private GameInfo gameInfo;
 
@@ -43,10 +42,19 @@ public class HistoryPanel extends JPanel {
 
 	public void setHistoryPanel(GameInfo gameInfo) {
 		this.gameInfo = gameInfo;
+
+		System.out.println(gameInfo.getMoveList().size());
+		for(Move m : gameInfo.getMoveList()) {
+			String moveString = m.getPrevPosition().getRow() + "->" + m.getCurrentPosition().getRow() ;
+			lm.addElement(moveString);
+		}
 	}
 
-	public void initPanel() {	
-		lm = new DefaultListModel();
+	/**
+	 * ONLY call ONCE. Initialize the historyPanel
+	 */
+	public void initPanel() {
+		lm = new DefaultListModel<String>();
 		BoxLayout by = new BoxLayout(this, BoxLayout.Y_AXIS);
 		this.setLayout(by);
 		this.setBorder(BorderFactory.createMatteBorder(1, 0, 1, 1, Color.BLACK));
@@ -98,17 +106,19 @@ public class HistoryPanel extends JPanel {
 
 		UndoRedo.add(ButtonContainer);
 
-		JList list = new JList();
+		JList<String> list = new JList<>();
+
 		list.setModel(lm);
-		
-		lm.addElement("testing");
-		lm.addElement("testing");
-		lm.addElement("testing");
-		lm.addElement("testing");
-		lm.addElement("testing");
-		
+
+//		lm.addElement("testing");
+//		lm.addElement("testing");
+//		lm.addElement("testing");
+//		lm.addElement("testing");
+//		lm.addElement("testing");
+
 		//list.setBackground(Color.GREEN);
 		list.setPreferredSize(new Dimension(200, 500));
+		list.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		//JList list = new JList(listModel);
 		//PeopleRenderer Render = new PeopleRenderer();
 		//list.setCellRenderer(Render);
