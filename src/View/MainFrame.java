@@ -96,23 +96,4 @@ public class MainFrame extends JFrame {
     public void setHistoryPanel(GameInfo gameInfo) {
         historyPanel.setHistoryPanel(gameInfo);
     }
-
-//    /**
-//     *
-//     */
-//    private void TestBoard() {
-//        // TODO Auto-generated method stub
-//        ArrayList<Point> highlights = new ArrayList<>();
-//        highlights.add(new Point(3, 4));
-//        highlights.add(new Point(4, 5));
-//        highlights.add(new Point(5, 4));
-//        highlights.add(new Point(2, 1));
-//
-////        boardPanel.refresh();
-//        boardPanel.changePiece(new Point(0, 5));
-//
-//        //bp.changePiece();
-//        boardPanel.highlightSquares(highlights);
-//
-//    }
 }

@@ -4,7 +4,6 @@ import Message.*;
 import Model.*;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -28,35 +27,7 @@ public class BoardPanel extends JPanel implements MouseListener {
 	 */
 	public BoardPanel(BlockingQueue<Message> queue) {
 		messageQueue = queue;
-		board = new Tile[8][8];
-		updateBoard(board);
 		addMouseListener(this);
-	}
-
-	/**
-	 * Update the Board
-	 * @param board
-	 */
-	public void updateBoard(Tile[][] board) {
-		for (int i = 0; i < 8; i++) {
-			for (int j = 0; j < 8; j++) {
-				p = new Point((75 * i) + 50, (75 * j) + 1);
-				boolean b = (i % 2 != 0 && j % 2 == 0) || (i % 2 == 0 && j % 2 != 0);
-
-				char col = (char) (i + 65);
-
-				if (j >= 5 && b)
-					board[i][j] = new Tile(j, col, p, Color.LIGHT_GRAY, 75, false, PieceType.BLACKPIECE); //true/false determines highlight
-				else if (j < 3 && b)
-					board[i][j] = new Tile(j, col, p, Color.LIGHT_GRAY, 75, false, PieceType.REDPIECE);
-				else {
-					if (b)
-						board[i][j] = new Tile(j, col, p, Color.LIGHT_GRAY, 75, false, PieceType.NONE); //true/false determines highlight
-					else
-						board[i][j] = new Tile(j, col, p, Color.WHITE, 75, false, PieceType.NONE);
-				}
-			}
-		}
 	}
 
 	@Override
@@ -67,7 +38,6 @@ public class BoardPanel extends JPanel implements MouseListener {
 	@Override
 	public void mousePressed(MouseEvent e) {
 		try {
-			System.out.println("View clicked");
 			p = e.getPoint();
 			if (e.getPoint().x >= 50 && e.getPoint().y >= 1) {
 				int x = (e.getPoint().x - 50) / 75;
@@ -75,11 +45,15 @@ public class BoardPanel extends JPanel implements MouseListener {
 
 				System.out.println(x + " " + y);
 				if (x < 8 && y < 8) {
-					board[x][y].setHighlight(!board[x][y].getHighlight());
+					// If click on highlight square => move
+					CheckersPiece currentPiece = board[x][y].getCp();
+					if (board[x][y].isHighlight()) {
+						messageQueue.put(new MoveMessage(currentPiece, gameInfo.getSelectedPiece()));
+					} else {
+						messageQueue.put(new ShowHighlightMessage(currentPiece));
+					}
 				}
 			}
-			messageQueue.put(new ShowHighlightMessage());
-			System.out.println("Controller?");
 		} catch (InterruptedException exception) {
 			System.out.println("Failed controller");
 			exception.printStackTrace();
@@ -108,10 +82,7 @@ public class BoardPanel extends JPanel implements MouseListener {
 	public void setBoardPanel(GameInfo gameInfo) {
 		this.gameInfo = gameInfo;
 		board = gameInfo.getBoard();
-//		updateBoard(gameInfo);
-		System.out.println("View update the new board with highlight");
 		repaint();
-		System.out.println();
 	}
 
 	/**
@@ -146,13 +117,16 @@ public class BoardPanel extends JPanel implements MouseListener {
 		g2.setColor(Color.BLACK);
 
 		//Drawing the Board
-		for (int i = 0; i < board.length; i++) {
-			for (int j = 0; j < board[i].length; j++) {
-				board[i][j].draw(g2);
-				System.out.println(board[i][j]);
-				board[i][j].addMouseListener(this);
+		if (board != null) {
+			for (int i = 0; i < board.length; i++) {
+				for (int j = 0; j < board[i].length; j++) {
+					board[i][j].draw(g2);
+					System.out.println(board[i][j]);
+					board[i][j].addMouseListener(this);
+				}
 			}
 		}
+
 
 		//Drawing the Integers
 		g2.setColor(Color.DARK_GRAY);

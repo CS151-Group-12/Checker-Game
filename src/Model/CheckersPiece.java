@@ -44,7 +44,6 @@ public class CheckersPiece {
 		Ellipse2D.Double Circle = new Ellipse2D.Double(p.x + 2, p.y + 2, 71, 71);
 		Ellipse2D.Double Circle2 = new Ellipse2D.Double(p.x + 7, p.y + 7, 61, 61);
 
-
 		g2.setColor(outer);
 		g2.fill(Circle);
 		g2.setColor(Color.BLACK);

@@ -30,11 +30,12 @@ public class Main {
      * @throws Exception
      */
     public static void main(String[] args) throws Exception {
-        view = View.init(queue);
         model = new Model();
+        view = View.init(queue);
         Controller game = new Controller(view, model, queue);
         game.mainLoop();
         view.dispose();
         queue.clear();
     }
+
 }

@@ -25,6 +25,7 @@ public class Controller {
         this.model = model;
         this.queue = queue;
         this.model.start();
+        updateGame("INIT_BOARD");
         addAllValves();
     }
 
@@ -120,7 +121,10 @@ public class Controller {
             }
 
             // Model
-            model.movePiece();
+            Move move = new Move(message.getCp1(), message.getCp2());
+
+            // Make a move.
+            model.makeMove(move);
 
             updateGame("MOVE");
 
@@ -134,8 +138,9 @@ public class Controller {
                 return ValveResponse.MISS;
             }
 
+
             // Model
-            model.showHighlight(4,4);
+            model.showHighlight(message.getCp1());
 
             updateGame("HIGHLIGHT");
 

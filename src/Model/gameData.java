@@ -3,10 +3,6 @@ package Model;
 import java.util.Vector;
 
 public class gameData {
-
-
-
-
     public static final int
             EMPTY = 0,
             RED = 1,
@@ -58,7 +54,7 @@ public class gameData {
     }
 
 
-    public void makeMove(CheckersMove move) {
+    public void makeMove(Move move) {
         // Make the specified move.  It is assumed that move
         // is non-null and that the move it represents is legal.
         makeMove(move.fromRow, move.fromCol, move.toRow, move.toCol);
@@ -82,7 +78,7 @@ public class gameData {
     }
 
 
-    public CheckersMove[] getLegalMoves(int player) {
+    public Move[] getLegalMoves(int player) {
 
 
         if (player != RED && player != BLACK)
@@ -101,13 +97,13 @@ public class gameData {
             for (int col = 0; col < 8; col++) {
                 if (board[row][col] == player || board[row][col] == playerKing) {
                     if (canJump(player, row, col, row+1, col+1, row+2, col+2))
-                        moves.addElement(new CheckersMove(row, col, row+2, col+2));
+                        moves.addElement(new Move(row, col, row+2, col+2));
                     if (canJump(player, row, col, row-1, col+1, row-2, col+2))
-                        moves.addElement(new CheckersMove(row, col, row-2, col+2));
+                        moves.addElement(new Move(row, col, row-2, col+2));
                     if (canJump(player, row, col, row+1, col-1, row+2, col-2))
-                        moves.addElement(new CheckersMove(row, col, row+2, col-2));
+                        moves.addElement(new Move(row, col, row+2, col-2));
                     if (canJump(player, row, col, row-1, col-1, row-2, col-2))
-                        moves.addElement(new CheckersMove(row, col, row-2, col-2));
+                        moves.addElement(new Move(row, col, row-2, col-2));
                 }
             }
         }
@@ -125,13 +121,13 @@ public class gameData {
                 for (int col = 0; col < 8; col++) {
                     if (board[row][col] == player || board[row][col] == playerKing) {
                         if (canMove(player,row,col,row+1,col+1))
-                            moves.addElement(new CheckersMove(row,col,row+1,col+1));
+                            moves.addElement(new Move(row,col,row+1,col+1));
                         if (canMove(player,row,col,row-1,col+1))
-                            moves.addElement(new CheckersMove(row,col,row-1,col+1));
+                            moves.addElement(new Move(row,col,row-1,col+1));
                         if (canMove(player,row,col,row+1,col-1))
-                            moves.addElement(new CheckersMove(row,col,row+1,col-1));
+                            moves.addElement(new Move(row,col,row+1,col-1));
                         if (canMove(player,row,col,row-1,col-1))
-                            moves.addElement(new CheckersMove(row,col,row-1,col-1));
+                            moves.addElement(new Move(row,col,row-1,col-1));
                     }
                 }
             }
@@ -144,16 +140,16 @@ public class gameData {
         if (moves.size() == 0)
             return null;
         else {
-            CheckersMove[] moveArray = new CheckersMove[moves.size()];
+            Move[] moveArray = new Move[moves.size()];
             for (int i = 0; i < moves.size(); i++)
-                moveArray[i] = (CheckersMove)moves.elementAt(i);
+                moveArray[i] = (Move)moves.elementAt(i);
             return moveArray;
         }
 
     }  // end getLegalMoves
 
 
-    public CheckersMove[] getLegalJumpsFrom(int player, int row, int col) {
+    public Move[] getLegalJumpsFrom(int player, int row, int col) {
         // Return a list of the legal jumps that the specified player can
         // make starting from the specified row and column.  If no such
         // jumps are possible, null is returned.  The logic is similar
@@ -168,20 +164,20 @@ public class gameData {
         Vector moves = new Vector();  // The legal jumps will be stored in this vector.
         if (board[row][col] == player || board[row][col] == playerKing) {
             if (canJump(player, row, col, row+1, col+1, row+2, col+2))
-                moves.addElement(new CheckersMove(row, col, row+2, col+2));
+                moves.addElement(new Move(row, col, row+2, col+2));
             if (canJump(player, row, col, row-1, col+1, row-2, col+2))
-                moves.addElement(new CheckersMove(row, col, row-2, col+2));
+                moves.addElement(new Move(row, col, row-2, col+2));
             if (canJump(player, row, col, row+1, col-1, row+2, col-2))
-                moves.addElement(new CheckersMove(row, col, row+2, col-2));
+                moves.addElement(new Move(row, col, row+2, col-2));
             if (canJump(player, row, col, row-1, col-1, row-2, col-2))
-                moves.addElement(new CheckersMove(row, col, row-2, col-2));
+                moves.addElement(new Move(row, col, row-2, col-2));
         }
         if (moves.size() == 0)
             return null;
         else {
-            CheckersMove[] moveArray = new CheckersMove[moves.size()];
+            Move[] moveArray = new Move[moves.size()];
             for (int i = 0; i < moves.size(); i++)
-                moveArray[i] = (CheckersMove)moves.elementAt(i);
+                moveArray[i] = (Move)moves.elementAt(i);
             return moveArray;
         }
     }  // end getLegalMovesFrom()
