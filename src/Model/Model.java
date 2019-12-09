@@ -41,7 +41,6 @@ public class Model {
     private void setBoard(Tile[][] boardTiles) {
         for (int row = 0; row < 8; row++) {
             for (int col = 0; col < 8; col++) {
-
                 if (row % 2 == col % 2) {
                     if (row < 3)
                         boardTiles[row][col] = new Tile(row, col, Color.LIGHT_GRAY, 75, false, PieceType.BLACKPIECE);
