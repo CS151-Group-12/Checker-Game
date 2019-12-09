@@ -8,7 +8,7 @@ public class Message {
     /** The action's name. */
     private final String name;
     public String message;
-    private CheckersPiece cp1, cp2;
+    private CheckersPiece cp1;
     private Tile tileToMove;
 
     public Message(String name) {
@@ -18,6 +18,7 @@ public class Message {
     public Message(String name, CheckersPiece cp1, Tile tileToMove) {
         this.name = name;
         this.tileToMove = tileToMove;
+        this.cp1 = cp1;
     }
 
     public Message(String name, CheckersPiece cp) {
@@ -34,19 +35,8 @@ public class Message {
         return name;
     }
 
-    public void setText(String s) {
-        message = s;
-    }
-    public void gameOver(String str) {
-
-    }
-
     public Tile getTileToMove() {
         return tileToMove;
-    }
-
-    public CheckersPiece getCp2() {
-        return cp2;
     }
 
     public CheckersPiece getCp1() {

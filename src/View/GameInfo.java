@@ -9,16 +9,10 @@ import java.util.ArrayList;
  */
 public class GameInfo {
 
-    Model model;
-
-    private ArrayList<Player> playerList;
     private ArrayList<Move> moveList;
     private Tile[][] board;
-
     private CheckersPiece selectedPiece;
-
-    private int playerTurn;
-
+    private int playerTurn, winner;
 
     /**
      * View will display the gameInfo based on the updated Model
@@ -26,34 +20,26 @@ public class GameInfo {
      * @param model
      */
     public GameInfo(Model model) {
-        playerList = model.getPlayerList();
         moveList = model.getMoveList();
         board = model.getBoard();
         selectedPiece = model.getSelectedPiece();
         playerTurn = model.getCurrentPlayerPosition();
+        winner = model.isWinner();
     }
 
-    public ArrayList<Player> getPlayerList() {
-        return playerList;
-    }
-
-    public ArrayList<Move> getMoveList() {
+    ArrayList<Move> getMoveList() {
         return moveList;
     }
-    public Tile[][] getBoard() {
+    Tile[][] getBoard() {
         return board;
     }
-
-
-    public CheckersPiece getSelectedPiece() {
+    CheckersPiece getSelectedPiece() {
         return selectedPiece;
     }
-
-    public void setSelectedPiece(CheckersPiece selectedPiece) {
-        this.selectedPiece = selectedPiece;
-    }
-
-    public int getPlayerTurn() {
+    int getPlayerTurn() {
         return playerTurn;
+    }
+    int getWinner() {
+        return winner;
     }
 }

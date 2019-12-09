@@ -13,7 +13,7 @@ public class MainFrame extends JFrame {
     private BoardPanel boardPanel;
     private HistoryPanel historyPanel;
 
-    final int WIDTH = 900, HEIGHT = 725;
+    private final int WIDTH = 900;
 
     /**
      * Initiate the frame
@@ -21,7 +21,7 @@ public class MainFrame extends JFrame {
      * @param queue
      * @return
      */
-    public static MainFrame init(BlockingQueue<Message> queue) {
+    static MainFrame init(BlockingQueue<Message> queue) {
         if (mainFrame == null) {
             messageQueue = queue;
             mainFrame = new MainFrame();
@@ -50,6 +50,7 @@ public class MainFrame extends JFrame {
      * Set up the frame size and its properties
      */
     private void setFrameDisplay() {
+        int HEIGHT = 725;
         this.setPreferredSize(new Dimension(WIDTH, HEIGHT));
         this.setResizable(false);
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -89,11 +90,11 @@ public class MainFrame extends JFrame {
         this.add(historyPanel, BorderLayout.EAST);
     }
 
-    public void setBoardPanel(GameInfo gameInfo) {
+    void setBoardPanel(GameInfo gameInfo) {
         boardPanel.setBoardPanel(gameInfo);
     }
 
-    public void setHistoryPanel(GameInfo gameInfo) {
+    void setHistoryPanel(GameInfo gameInfo) {
         historyPanel.setHistoryPanel(gameInfo);
     }
 }

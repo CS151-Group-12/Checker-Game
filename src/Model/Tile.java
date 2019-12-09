@@ -5,7 +5,6 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
 
-// will contain UI and logic for each tile square
 public class Tile extends JComponent {
 	private int row, col;
 	private Point coords;
@@ -26,7 +25,7 @@ public class Tile extends JComponent {
 		setCurrentCheckerPiece();
 	}
 
-	void setCurrentCheckerPiece() {
+	private void setCurrentCheckerPiece() {
 		switch (s) {
 			case BLACKPIECE:
 				cp = new CheckersPiece(row, col, coords, false, false, PieceType.BLACKPIECE);
@@ -43,19 +42,6 @@ public class Tile extends JComponent {
 			case NONE:
 				break;
 		}
-	}
-
-	public void setCheckerPiece(CheckersPiece cp) {
-		this.cp = cp;
-	}
-
-	public void setHighlight(Boolean b) {
-		highlight = b;
-	}
-
-
-	public boolean containsChecker() {
-		return cp != null;
 	}
 
 	public void draw(Graphics2D g2) {
@@ -77,26 +63,18 @@ public class Tile extends JComponent {
 		return cp;
 	}
 
-	public PieceType getCheckerPieceType() {
+	PieceType getCheckerPieceType() {
 		if (cp != null)
 			return cp.getPieceType();
 		return null;
 	}
 
-	public void setCheckerPieceType(PieceType pt) {
-		cp.setPieceType(pt);
+	public void setHighlight(Boolean b) {
+		highlight = b;
 	}
 
-	public Color getTileColor() {
-		return tileColor;
-	}
-
-	public PieceType getS() {
-		return s;
-	}
-
-	public Point getCoords() {
-		return coords;
+	public boolean containsChecker() {
+		return cp != null;
 	}
 
 	public int getRow() {
@@ -107,7 +85,7 @@ public class Tile extends JComponent {
 		return col;
 	}
 
-	public boolean isHighlight() {
+	boolean isHighlight() {
 		return highlight;
 	}
 

@@ -9,7 +9,6 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.event.*;
-import java.util.ArrayList;
 import java.util.concurrent.BlockingQueue;
 
 import javax.swing.JPanel;
@@ -19,7 +18,6 @@ public class BoardPanel extends JPanel implements MouseListener {
 	private BlockingQueue<Message> messageQueue;
 	private GameInfo gameInfo;
 	private Point p;
-
 
 	/**
 	 * Constructor
@@ -85,36 +83,10 @@ public class BoardPanel extends JPanel implements MouseListener {
 
 	}
 
-	/**
-	 *
-	 * @param gameInfo
-	 */
-	public void setBoardPanel(GameInfo gameInfo) {
+	void setBoardPanel(GameInfo gameInfo) {
 		this.gameInfo = gameInfo;
 		board = gameInfo.getBoard();
 		repaint();
-	}
-
-	/**
-	 *
-	 * @param squares
-	 */
-	public void highlightSquares(ArrayList<Point> squares) {
-		for (Point p : squares) {
-			board[p.x][p.y].setHighlight(true);
-		}
-	}
-
-	/**
-	 *
-	 * @param p
-	 * @return
-	 */
-	public Point getCenter(Point p) {
-		int x = p.x - (25 / 2);
-		int y = p.y - (25 / 2);
-
-		return new Point(x, y);
 	}
 
 	@Override

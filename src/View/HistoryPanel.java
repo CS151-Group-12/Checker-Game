@@ -6,46 +6,24 @@ import Model.Move;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.GridLayout;
 import java.util.concurrent.BlockingQueue;
 
-import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
-import javax.swing.DefaultListModel;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JPanel;
+import javax.swing.*;
 
 public class HistoryPanel extends JPanel {
-	//set up back and forth arrows
-	//set up list
-	//set up player turn
-	//set up reset game
-	BlockingQueue<Message> messageQueue;
 	private DefaultListModel<String> lm;
 
-	private GameInfo gameInfo;
+	private JLabel playercolor;
+	private Font font3;
 
-	JButton undo = new JButton("Undo");
-
-	JButton redo = new JButton("Redo");
-
-	JLabel playercolor;
-	Font font3;
-
-	JPanel UndoRedo;
+	private JLabel winner;
 
 
 	public HistoryPanel(BlockingQueue<Message> queue) {
-		messageQueue = queue;
 		initPanel();
 	}
 
-	public void setHistoryPanel(GameInfo gameInfo) {
-		this.gameInfo = gameInfo;
+	void setHistoryPanel(GameInfo gameInfo) {
 		for(Move m : gameInfo.getMoveList()) {
 
 			String moveString = m.getFromRow() + "-" + m.getFromCol() + " -> " + m.getToRow() + "-" + m.getToCol();
@@ -65,6 +43,20 @@ public class HistoryPanel extends JPanel {
 
 		playercolor.setText(playerTurn);
 		playercolor.setForeground(c);
+
+		String winnerString = "";
+		Color winnerColor = Color.WHITE;
+		if (gameInfo.getWinner() == 0) {
+			winnerString = "RED WINS";
+			System.out.println(winnerString);
+			winnerColor = Color.RED;
+		} else if (gameInfo.getWinner() == 1) {
+			winnerString = "BLACK WINS";
+			winnerColor = Color.BLACK;
+		}
+
+		winner.setText(winnerString);
+		winner.setForeground(winnerColor);
 
 	}
 
@@ -93,13 +85,13 @@ public class HistoryPanel extends JPanel {
 
 		//Determines the color of the player turn
 
-		UndoRedo = new JPanel();
-		UndoRedo.setPreferredSize(new Dimension(300, 100));
-		this.add(UndoRedo);
-		UndoRedo.setBackground(Color.WHITE);
+		JPanel undoRedo = new JPanel();
+		undoRedo.setPreferredSize(new Dimension(300, 100));
+		this.add(undoRedo);
+		undoRedo.setBackground(Color.WHITE);
 
-		BoxLayout h = new BoxLayout(UndoRedo, BoxLayout.Y_AXIS);
-		UndoRedo.setLayout(h);
+		BoxLayout h = new BoxLayout(undoRedo, BoxLayout.Y_AXIS);
+		undoRedo.setLayout(h);
 
 		JPanel container = new JPanel();
 		container.setPreferredSize(new Dimension(300, 50));
@@ -107,47 +99,40 @@ public class HistoryPanel extends JPanel {
 		container.setBorder(BorderFactory.createMatteBorder(2, 0, 0, 1, Color.BLACK));
 
 		JLabel header = new JLabel("Move History");
-
 		header.setPreferredSize(new Dimension(125, 50));
 		header.setAlignmentX(JLabel.CENTER_ALIGNMENT);
 		Font font = new Font("integerfont", Font.PLAIN, 20);
 		header.setFont(font);
 
+		winner = new JLabel();
+		winner.setAlignmentX(JLabel.CENTER_ALIGNMENT);
+		Font font4 = new Font("integerfont", Font.PLAIN, 30);
+
+		winner.setFont(font4);
+
+		container.add(winner);
 		container.add(header);
 
-		UndoRedo.add(playerturn);
-		UndoRedo.add(playercolor);
-		UndoRedo.add(container);
+		undoRedo.add(playerturn);
+		undoRedo.add(playercolor);
+		undoRedo.add(container);
 
 		JList<String> list = new JList<>();
 		list.setModel(lm);
 
+		JScrollPane s = new JScrollPane(list);
+		s.setBorder(BorderFactory.createMatteBorder(2, 0, 0, 1, Color.BLACK));
+
 		list.setPreferredSize(new Dimension(200, 500));
 		list.setFixedCellHeight(50);
 		list.setFixedCellWidth(200);
-		list.setBorder(BorderFactory.createMatteBorder(2, 0, 0, 1, Color.BLACK));
 
-		this.add(list);
+		this.add(s);
 	}
 
 	@Override
 	public Dimension getPreferredSize() {
 		return new Dimension(200, 700);
-	}
-
-	@Override
-	public void paintComponent(Graphics g) {
-
-		Graphics2D g2 = (Graphics2D) g;
-
-		//g2.setColor(Color.LIGHT_GRAY);
-		// g2.drawRect(0, 0, 600, 600);
-//	      for (SceneShape s : shapes)
-//	      {
-//	         s.draw(g2);
-//	         if (s.isSelected())
-//	            s.drawSelection(g2);
-//	      }
 	}
 
 }

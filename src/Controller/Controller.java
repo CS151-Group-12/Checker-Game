@@ -16,7 +16,6 @@ public class Controller {
 
     /**
      * Constructor: Connect the Model, View, and message Queue
-     *
      * @param view
      * @param model
      */
@@ -31,10 +30,8 @@ public class Controller {
 
     /**
      * Main Loop to Execute the message from the View
-     *
-     * @throws Exception
      */
-    public void mainLoop() throws Exception {
+    void mainLoop() {
         ValveResponse response = ValveResponse.EXECUTED;
         Message message = null;
 
@@ -50,13 +47,6 @@ public class Controller {
                 if (response != ValveResponse.MISS) break;
             }
         }
-    }
-
-    /**
-     * @return the View of the App
-     */
-    public View getView() {
-        return view;
     }
 
     /**
@@ -124,13 +114,8 @@ public class Controller {
             Move move = new Move(message.getCp1().getRow(), message.getCp1().getCol(),
                     message.getTileToMove().getRow(), message.getTileToMove().getCol());
 
-            // Make a move.
+            model.doClickSquare(move);
 
-//            System.out.println("Selected Piece to move: " + message.getCp1());
-//            System.out.println("Piece position to move" + message.getTileToMove());
-            model.doMakeMove(move);
-
-            // Next Player to Act
             updateGame("MOVE");
 
             return ValveResponse.EXECUTED;
@@ -142,7 +127,7 @@ public class Controller {
             if (message.getClass() != ShowHighlightMessage.class) {
                 return ValveResponse.MISS;
             }
-            // Model
+
             model.showHighlight(message.getCp1());
 
             updateGame("HIGHLIGHT");

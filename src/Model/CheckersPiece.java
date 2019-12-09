@@ -13,11 +13,10 @@ public class CheckersPiece {
 	private boolean king;
 	private Color outer;
 	private Color inner;
-	int row, col;
-//	char col;
+	private int row, col;
 	private PieceType pieceType;
 
-	public CheckersPiece(int row, int col, Point p, Boolean red, Boolean king, PieceType pieceType) {
+	CheckersPiece(int row, int col, Point p, Boolean red, Boolean king, PieceType pieceType) {
 		this.p = p;
 		this.king = king;
 		this.row = row;
@@ -38,7 +37,7 @@ public class CheckersPiece {
 		return row;
 	}
 
-	public PieceType getPieceType() {
+	PieceType getPieceType() {
 		if (king) {
 			if (outer == Color.RED) {
 				pieceType = PieceType.REDKING;
@@ -55,7 +54,7 @@ public class CheckersPiece {
 		return pieceType;
 	}
 
-	public void setPieceType(PieceType pt) {
+	void setPieceType(PieceType pt) {
 		pieceType = pt;
 	}
 
@@ -63,7 +62,7 @@ public class CheckersPiece {
 		return col;
 	}
 
-	public void draw(Graphics2D g2) {
+	void draw(Graphics2D g2) {
 		g2.setColor(Color.GREEN);
 		Ellipse2D.Double Circle = new Ellipse2D.Double(p.x + 2, p.y + 2, 71, 71);
 		Ellipse2D.Double Circle2 = new Ellipse2D.Double(p.x + 7, p.y + 7, 61, 61);
@@ -82,6 +81,10 @@ public class CheckersPiece {
 			Image i = drawCrown();
 			g2.drawImage(i, p.x + 9, p.y + 9, Circle2.getBounds().width - 5, Circle2.getBounds().height - 5, null);
 		}
+	}
+
+	Color getOuter() {
+		return outer;
 	}
 
 	private Image drawCrown() {
