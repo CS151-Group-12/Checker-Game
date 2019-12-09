@@ -9,80 +9,106 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 public class CheckersPiece {
-	private Point p;
-	private boolean king;
-	private Color outer;
-	private Color inner;
-	int row;
-	char col;
+    private Point p;
+    private boolean king;
+    private Color outer;
+    private Color inner;
+    int row, col;
+    //	char col;
+    private PieceType pieceType;
 
-	public CheckersPiece(int row, char col, Point p, Boolean red, Boolean king) {
-		this.p = p;
-		this.king = king;
-		this.row = row;
-		this.col = col;
+    public CheckersPiece(int row, int col, Point p, Boolean red, Boolean king, PieceType pieceType) {
+        this.p = p;
+        this.king = king;
+        this.row = row;
+        this.col = col;
 
-		if (red) {
-			outer = Color.RED;
-			inner = new Color(196, 46, 20);
-		} else {
-			outer = Color.BLACK;
-			inner = new Color(74, 72, 72);
-		}
-	}
+        if (red) {
+            outer = Color.RED;
+            inner = new Color(196, 46, 20);
+        } else {
+            outer = Color.BLACK;
+            inner = new Color(74, 72, 72);
+        }
 
-	public int getRow() {
-		return row;
-	}
+        this.pieceType = pieceType;
+    }
 
-	public char getCol() {
-		return col;
-	}
+    public int getRow() {
+        return row;
+    }
 
-	public void draw(Graphics2D g2) {
-		g2.setColor(Color.GREEN);
-		Ellipse2D.Double Circle = new Ellipse2D.Double(p.x + 2, p.y + 2, 71, 71);
-		Ellipse2D.Double Circle2 = new Ellipse2D.Double(p.x + 7, p.y + 7, 61, 61);
+    public PieceType getPieceType() {
+        if (king) {
+            if (outer == Color.RED) {
+                pieceType = PieceType.REDKING;
+            } else {
+                pieceType =  PieceType.BLACKKING;
+            }
+        } else {
+            if (outer == Color.RED) {
+                pieceType = PieceType.REDPIECE;
+            } else {
+                pieceType = PieceType.BLACKPIECE;
+            }
+        }
+        return pieceType;
+    }
 
+    public void setPieceType(PieceType pt) {
+        pieceType = pt;
+    }
 
-		g2.setColor(outer);
-		g2.fill(Circle);
-		g2.setColor(Color.BLACK);
-		g2.draw(Circle);
-		g2.setColor(inner);
+    public int getCol() {
+        return col;
+    }
 
-		g2.fill(Circle2);
-		g2.setColor(Color.BLACK);
-		g2.draw(Circle2);
+    public void draw(Graphics2D g2) {
+        g2.setColor(Color.GREEN);
+        Ellipse2D.Double Circle = new Ellipse2D.Double(p.x + 2, p.y + 2, 71, 71);
+        Ellipse2D.Double Circle2 = new Ellipse2D.Double(p.x + 7, p.y + 7, 61, 61);
 
-		if (king) {
-			Image i = drawCrown();
-			g2.drawImage(i, p.x + 9, p.y + 9, Circle2.getBounds().width - 5, Circle2.getBounds().height - 5, null);
-		}
-	}
+        g2.setColor(outer);
+        g2.fill(Circle);
+        g2.setColor(Color.BLACK);
+        g2.draw(Circle);
+        g2.setColor(inner);
 
-	private Image drawCrown() {
-		Image image = null;
-		BufferedImage Bimage = null;
+        g2.fill(Circle2);
+        g2.setColor(Color.BLACK);
+        g2.draw(Circle2);
 
-		try {
-			Bimage = ImageIO.read(new File("resources/crown.png"));
+        if (king) {
+            Image i = drawCrown();
+            g2.drawImage(i, p.x + 9, p.y + 9, Circle2.getBounds().width - 5, Circle2.getBounds().height - 5, null);
+        }
+    }
 
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+    public Color getOuter() {
+        return outer;
+    }
 
-		image = Bimage;
+    private Image drawCrown() {
+        Image image = null;
+        BufferedImage Bimage = null;
 
-		assert image != null;
-		image = image.getScaledInstance(50, 50, Image.SCALE_SMOOTH);
-		return image;
-	}
+        try {
+            Bimage = ImageIO.read(new File("resources/crown.png"));
 
-	@Override
-	public String toString() {
-		return super.toString();
-	}
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        image = Bimage;
+
+        assert image != null;
+        image = image.getScaledInstance(50, 50, Image.SCALE_SMOOTH);
+        return image;
+    }
+
+    @Override
+    public String toString() {
+        return "Row: " + row + " - Col " + col + " - piecetype: " +
+                pieceType;
+    }
 }
-
-

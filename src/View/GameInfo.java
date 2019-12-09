@@ -9,10 +9,14 @@ import java.util.ArrayList;
  */
 public class GameInfo {
 
+    Model model;
 
     private ArrayList<Player> playerList;
     private ArrayList<Move> moveList;
     private Tile[][] board;
+
+    private CheckersPiece selectedPiece;
+
 
     /**
      * View will display the gameInfo based on the updated Model
@@ -23,6 +27,7 @@ public class GameInfo {
         playerList = model.getPlayerList();
         moveList = model.getMoveList();
         board = model.getBoard();
+        selectedPiece = model.getSelectedPiece();
     }
 
     public ArrayList<Player> getPlayerList() {
@@ -36,4 +41,12 @@ public class GameInfo {
         return board;
     }
 
+
+    public CheckersPiece getSelectedPiece() {
+        return selectedPiece;
+    }
+
+    public void setSelectedPiece(CheckersPiece selectedPiece) {
+        this.selectedPiece = selectedPiece;
+    }
 }
