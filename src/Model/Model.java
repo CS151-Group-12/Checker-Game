@@ -105,6 +105,7 @@ public class Model {
         System.out.println("[doMakeMove]: " + move.toString());
         makeMove(move);
 //        makeMove(move);
+        System.out.println("[doMakeMove]: " + move.isJump());
 
         if (move.isJump()) {
             System.out.println("move is a jump");
@@ -154,7 +155,6 @@ public class Model {
         makeMove(move.fromRow, move.fromCol, move.toRow, move.toCol);
     }
 
-
     public void makeMove(int fromRow, int fromCol, int toRow, int toCol) {
 
         Tile fromTile = boardTiles[fromRow][fromCol];
@@ -170,15 +170,19 @@ public class Model {
 
             int jumpRow = (fromRow + toRow) / 2;  // Row of the jumped piece.
             int jumpCol = (fromCol + toCol) / 2;  // Column of the jumped piece.
-            boardTiles[jumpRow][jumpCol].setCheckerPieceType(PieceType.NONE);
+            boardTiles[jumpRow][jumpCol] = new Tile(jumpRow, jumpCol, Color.LIGHT_GRAY, 75, false, PieceType.NONE);
         }
         // Convert to a King
         if (toRow == 0 &&
-                boardTiles[toRow][toCol].getCheckerPieceType() == PieceType.REDPIECE)
-            boardTiles[toRow][toCol].setCheckerPieceType(PieceType.REDKING);
+                boardTiles[toRow][toCol].getCheckerPieceType() == PieceType.REDPIECE) {
+            System.out.println("Convert to Red King");
+            boardTiles[toRow][toCol] = new Tile(toRow, toCol, Color.LIGHT_GRAY, 75, false, PieceType.REDKING);
+        }
         if (toRow == 7 &&
-                boardTiles[toRow][toCol].getCheckerPieceType() == PieceType.BLACKPIECE)
-            boardTiles[toRow][toCol].setCheckerPieceType(PieceType.BLACKKING);
+                boardTiles[toRow][toCol].getCheckerPieceType() == PieceType.BLACKPIECE) {
+            System.out.println("Convert to Black King");
+            boardTiles[toRow][toCol] = new Tile(toRow, toCol, Color.LIGHT_GRAY, 75, false, PieceType.BLACKKING);
+        }
     }
 
 
@@ -197,18 +201,20 @@ public class Model {
 
         Vector<Move> moves = new Vector<>();  // Moves will be stored in this vector.
 
+
         for (int row = 0; row < 8; row++) {
             for (int col = 0; col < 8; col++) {
+
                 if (boardTiles[row][col].getCheckerPieceType() == pt ||
                         boardTiles[row][col].getCheckerPieceType() == playerKing) {
                     if (canJump(pt, row, col, row + 1, col + 1, row + 2, col + 2))
-                        moves.addElement(new Move(row, col, row+2, col+2));
-                    if (canJump(pt, row, col, row-1, col+1, row-2, col+2))
-                        moves.addElement(new Move(row, col, row-2, col+2));
-                    if (canJump(pt, row, col, row+1, col-1, row+2, col-2))
-                        moves.addElement(new Move(row, col, row+2, col-2));
-                    if (canJump(pt, row, col, row-1, col-1, row-2, col-2))
-                        moves.addElement(new Move(row, col, row-2, col-2));
+                        moves.addElement(new Move(row, col, row + 2, col + 2));
+                    if (canJump(pt, row, col, row - 1, col + 1, row - 2, col + 2))
+                        moves.addElement(new Move(row, col, row - 2, col+2));
+                    if (canJump(pt, row, col, row + 1, col - 1, row + 2, col - 2))
+                        moves.addElement(new Move(row, col, row + 2, col - 2));
+                    if (canJump(pt, row, col, row - 1, col - 1, row - 2, col - 2))
+                        moves.addElement(new Move(row, col, row - 2, col - 2));
                 }
             }
         }
@@ -237,8 +243,10 @@ public class Model {
             return null;
         else {
             Move[] moveArray = new Move[moves.size()];
-            for (int i = 0; i < moves.size(); i++)
+            for (int i = 0; i < moves.size(); i++) {
+                System.out.println(moveArray[i]);
                 moveArray[i] = moves.elementAt(i);
+            }
             return moveArray;
         }
 
@@ -255,13 +263,21 @@ public class Model {
             playerKing = PieceType.BLACKKING;
         Vector<Move> moves = new Vector<>();  // The legal jumps will be stored in this vector.
         if (boardTiles[row][col].getCheckerPieceType() == pieceType || boardTiles[row][col].getCheckerPieceType() == playerKing) {
-            if (canJump(pieceType, row, col, row+1, col+1, row+2, col+2))
-                moves.addElement(new Move(row, col, row+2, col+2));
-            if (canJump(pieceType, row, col, row-1, col+1, row-2, col+2))
+            if (canJump(pieceType, row, col,
+                    row + 1, col + 1,
+                    row + 2, col + 2))
+                moves.addElement(new Move(row, col, row + 2, col + 2));
+            if (canJump(pieceType, row, col,
+                    row - 1, col + 1,
+                    row - 2, col + 2))
                 moves.addElement(new Move(row, col, row-2, col+2));
-            if (canJump(pieceType, row, col, row+1, col-1, row+2, col-2))
+            if (canJump(pieceType, row, col,
+                    row + 1, col - 1,
+                    row + 2, col - 2))
                 moves.addElement(new Move(row, col, row+2, col-2));
-            if (canJump(pieceType, row, col, row-1, col-1, row-2, col-2))
+            if (canJump(pieceType, row, col,
+                    row - 1, col - 1,
+                    row - 2, col - 2))
                 moves.addElement(new Move(row, col, row-2, col-2));
         }
         if (moves.size() == 0)
@@ -277,24 +293,32 @@ public class Model {
 
     private boolean canJump(PieceType pieceType, int r1, int c1, int r2, int c2, int r3, int c3) {
 
-        if (r3 < 0 || r3 >= 8 || c3 < 0 || c3 >= 8)
+        if (r3 < 0 || r3 >= 8 || c3 < 0 || c3 >= 8) {
+            System.out.println("[Model-CanJump] case 1: (" + r1 + ", " + c1 + ") - (" + r2 + ", " + c2 + ")");
             return false;  // (r3,c3) is off the board.
-
-        if (boardTiles[r3][c3].getCheckerPieceType() != PieceType.NONE)
+        }
+        if (boardTiles[r3][c3].containsChecker()) {
+            System.out.println("[Model-CanJump] case 2: (" + r1 + ", " + c1 + ") - (" + r2 + ", " + c2 + ") - (" + r3 + ", " + c3 + ")");
             return false;  // (r3,c3) already contains a piece.
-
+        }
         if (pieceType == PieceType.REDPIECE) {
-            if (boardTiles[r1][c1].getCheckerPieceType() == PieceType.REDPIECE && r3 > r1)
+            if (boardTiles[r1][c1].getCheckerPieceType() == PieceType.REDPIECE &&
+                    r3 < r1)
                 return false;  // Regular red piece can only move  up.
-            if (boardTiles[r2][c2].getCheckerPieceType() != PieceType.BLACKPIECE && boardTiles[r2][c2].getCheckerPieceType() != PieceType.BLACKKING)
+            if (boardTiles[r2][c2].getCheckerPieceType() != PieceType.BLACKPIECE &&
+                    boardTiles[r2][c2].getCheckerPieceType() != PieceType.BLACKKING)
                 return false;  // There is no black piece to jump.
+            System.out.println("[Model-CanJump] case 3: (" + r1 + ", " + c1 + ") - (" + r2 + ", " + c2 + ") - (" + r3 + ", " + c3 + ")");
             return true;  // The jump is legal.
         }
         else {
-            if (boardTiles[r1][c1].getCheckerPieceType() == PieceType.BLACKPIECE && r3 < r1)
+            if (boardTiles[r1][c1].getCheckerPieceType() == PieceType.BLACKPIECE &&
+                    r3 > r1)
                 return false;  // Regular black piece can only move downn.
-            if (boardTiles[r2][c2].getCheckerPieceType() != PieceType.REDPIECE && boardTiles[r2][c2].getCheckerPieceType() != PieceType.REDKING)
+            if (boardTiles[r2][c2].getCheckerPieceType() != PieceType.REDPIECE &&
+                    boardTiles[r2][c2].getCheckerPieceType() != PieceType.REDKING)
                 return false;  // There is no red piece to jump.
+            System.out.println("[Model-CanJump] case 4: (" + r1 + ", " + c1 + ") - (" + r2 + ", " + c2 + ") - (" + r3 + ", " + c3 + ")");
             return true;  // The jump is legal.
         }
 
@@ -307,8 +331,7 @@ public class Model {
             return false;  // (r2,c2) is off the board.
         }
 
-        if (
-                boardTiles[r2][c2].containsChecker()) {
+        if (boardTiles[r2][c2].containsChecker()) {
             return false;  // (r2,c2) already contains a piece.
         }
 
@@ -316,7 +339,7 @@ public class Model {
 
             if (boardTiles[r1][c1].getCheckerPieceType() == PieceType.REDPIECE && r2 > r1)
                 return false;  // Regualr red piece can only move down.
-//            System.out.println("[Model-CanMove] case 3: (" + r1 + ", " + c1 + ") - (" + r2 + ", " + c2 + ")");
+            System.out.println("[Model-CanMove] case 3: (" + r1 + ", " + c1 + ") - (" + r2 + ", " + c2 + ")");
             return true;  // The move is legal.
         }else {
             if (boardTiles[r1][c1].getCheckerPieceType() == PieceType.BLACKPIECE && r2 < r1)

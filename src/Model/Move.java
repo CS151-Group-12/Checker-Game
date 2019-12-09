@@ -79,6 +79,7 @@ public class Move {
 	 * @return
 	 */
 	boolean isJump() {
+		System.out.println("[isJump] = " + (fromRow - toRow));
 		return (fromRow - toRow == 2 || fromRow - toRow == -2);
 	}
 

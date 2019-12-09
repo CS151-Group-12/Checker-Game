@@ -128,7 +128,7 @@ public class Controller {
 
 //            System.out.println("Selected Piece to move: " + message.getCp1());
 //            System.out.println("Piece position to move" + message.getTileToMove());
-            model.doClickSquare(move);
+            model.doMakeMove(move);
 
             // Next Player to Act
             updateGame("MOVE");

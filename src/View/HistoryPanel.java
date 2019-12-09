@@ -33,6 +33,11 @@ public class HistoryPanel extends JPanel {
 
 	JButton redo = new JButton("Redo");
 
+	JLabel playercolor;
+	Font font3;
+
+	JPanel UndoRedo;
+
 
 	public HistoryPanel(BlockingQueue<Message> queue) {
 		messageQueue = queue;
@@ -42,9 +47,25 @@ public class HistoryPanel extends JPanel {
 	public void setHistoryPanel(GameInfo gameInfo) {
 		this.gameInfo = gameInfo;
 		for(Move m : gameInfo.getMoveList()) {
+
 			String moveString = m.getFromRow() + "-" + m.getFromCol() + " -> " + m.getToRow() + "-" + m.getToCol();
-			lm.addElement(moveString);
+			if (!lm.contains(moveString))
+				lm.addElement(moveString);
 		}
+
+		String playerTurn;
+		Color c;
+		if (gameInfo.getPlayerTurn() == 0) {
+			playerTurn = "Red's Turn";
+			c = Color.RED;
+		} else {
+			playerTurn = "Black's Turn";
+			c = Color.BLACK;
+		}
+
+		playercolor.setText(playerTurn);
+		playercolor.setForeground(c);
+
 	}
 
 	public void initPanel() {
@@ -58,52 +79,21 @@ public class HistoryPanel extends JPanel {
 		JLabel playerturn = new JLabel("Player's turn");
 		playerturn.setBackground(Color.BLACK);
 
+		playercolor = new JLabel("Red's Turn");
+
 		playerturn.setPreferredSize(new Dimension(100, 50));
 		playerturn.setFont(font1);
 		playerturn.setAlignmentX(JLabel.CENTER_ALIGNMENT);
-//		PlayerTurn.add(playerturn);
-
-		Font font3 = new Font("colorfont", Font.PLAIN, 20);
-
-
-
-
-///////////////////////////////////////////////////////////
-		//Determines the color of the player turn
-		JLabel playercolor = new JLabel("Red's Turn");
-		playercolor.setForeground(Color.RED);
-
-//		playercolor.setText("Black's Turn");
-//		playercolor.setForeground(Color.BLACK);
-
-
-///////////////////////////////////////////////////////////
-
-
-
 
 		playercolor.setPreferredSize(new Dimension(100, 50));
 		playercolor.setFont(font3);
 		playercolor.setAlignmentX(JLabel.CENTER_ALIGNMENT);
 
+		font3 = new Font("colorfont", Font.PLAIN, 20);
 
-		JPanel ButtonContainer = new JPanel();
-		ButtonContainer.setLayout(new GridLayout(1, 2));
+		//Determines the color of the player turn
 
-		undo.addActionListener(e -> System.out.println(gameInfo.getMoveList().toString()));
-		redo.addActionListener(e -> System.out.println("redo"));
-
-
-		ButtonContainer.add(undo);
-		ButtonContainer.add(redo);
-		ButtonContainer.setBackground(Color.WHITE);
-		ButtonContainer.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 1, Color.BLACK));
-		//PlayerTurn.add(ButtonContainer);
-
-		//this.add(playerturn);
-		//PlayerTurn.setBackground(Color.BLUE);
-
-		JPanel UndoRedo = new JPanel();
+		UndoRedo = new JPanel();
 		UndoRedo.setPreferredSize(new Dimension(300, 100));
 		this.add(UndoRedo);
 		UndoRedo.setBackground(Color.WHITE);
@@ -129,24 +119,10 @@ public class HistoryPanel extends JPanel {
 		UndoRedo.add(playercolor);
 		UndoRedo.add(container);
 
-		UndoRedo.add(ButtonContainer);
-
 		JList<String> list = new JList<>();
 		list.setModel(lm);
 
-//		lm.addElement("testing");
-//		lm.addElement("testing");
-//		lm.addElement("testing");
-//		lm.addElement("testing");
-//		lm.addElement("testing");
-
-
-
-		//list.setBackground(Color.GREEN);
 		list.setPreferredSize(new Dimension(200, 500));
-		//JList list = new JList(listModel);
-		//PeopleRenderer Render = new PeopleRenderer();
-		//list.setCellRenderer(Render);
 		list.setFixedCellHeight(50);
 		list.setFixedCellWidth(200);
 		list.setBorder(BorderFactory.createMatteBorder(2, 0, 0, 1, Color.BLACK));

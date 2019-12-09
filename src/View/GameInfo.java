@@ -17,6 +17,8 @@ public class GameInfo {
 
     private CheckersPiece selectedPiece;
 
+    private int playerTurn;
+
 
     /**
      * View will display the gameInfo based on the updated Model
@@ -28,6 +30,7 @@ public class GameInfo {
         moveList = model.getMoveList();
         board = model.getBoard();
         selectedPiece = model.getSelectedPiece();
+        playerTurn = model.getCurrentPlayerPosition();
     }
 
     public ArrayList<Player> getPlayerList() {
@@ -48,5 +51,9 @@ public class GameInfo {
 
     public void setSelectedPiece(CheckersPiece selectedPiece) {
         this.selectedPiece = selectedPiece;
+    }
+
+    public int getPlayerTurn() {
+        return playerTurn;
     }
 }
