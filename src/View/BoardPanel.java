@@ -43,13 +43,23 @@ public class BoardPanel extends JPanel implements MouseListener {
 				int x = (e.getPoint().x - 50) / 75;
 				int y = (e.getPoint().y - 1) / 75;
 
-				System.out.println(x + " " + y);
 				if (x < 8 && y < 8) {
 					// If click on highlight square => move
-					CheckersPiece currentPiece = board[x][y].getCp();
-					if (board[x][y].isHighlight()) {
-						messageQueue.put(new MoveMessage(currentPiece, gameInfo.getSelectedPiece()));
-					} else {
+					Tile tile = board[y][x];
+					CheckersPiece currentPiece = tile.getCp();
+
+					// Check if user already click a piece
+					if (gameInfo.getSelectedPiece() != null) {
+						// click a new tile that has a checker => turn off the highglight
+						if (tile.containsChecker()) {
+							messageQueue.put(new ShowHighlightMessage(currentPiece));
+						} else {
+							// Click a new tile that doensn't have a checker -> move the piece
+							messageQueue.put(new MoveMessage(gameInfo.getSelectedPiece(), tile));
+						}
+					}
+					// If user is a firstClick => show highlight of that piece
+					else {
 						messageQueue.put(new ShowHighlightMessage(currentPiece));
 					}
 				}
@@ -121,7 +131,6 @@ public class BoardPanel extends JPanel implements MouseListener {
 			for (int i = 0; i < board.length; i++) {
 				for (int j = 0; j < board[i].length; j++) {
 					board[i][j].draw(g2);
-					System.out.println(board[i][j]);
 					board[i][j].addMouseListener(this);
 				}
 			}
@@ -135,32 +144,14 @@ public class BoardPanel extends JPanel implements MouseListener {
 		g2.drawRect(50, 1, 600, 600);
 		for (int x = 8; x >= 1; x--) {
 			g2.setColor(Color.BLACK);
-			g2.drawString(Integer.toString(x), 15, (x * 75) - 25);
-
+			g2.drawString(Integer.toString(x - 1), 15, (x * 75) - 25);
 		}
 
 		//Drawing the Letters
-		int ascciHvalue = 64;
+//		int ascciHvalue = 64;
 		for (int x = 1; x < 9; x++) {
 			g2.setColor(Color.BLACK);
-			g2.drawString("" + (char) (ascciHvalue + x), (x * 75) + 5, 635);
+			g2.drawString("" + (x - 1), (x * 75) + 5, 635);
 		}
-	}
-
-	/**
-	 * Refresh the Board
-	 */
-	public void refresh() {
-		for (int i = 0; i < board.length; i++) {
-			for (int j = 0; j < board.length; j++) {
-				boolean b = i % 2 == 0 && j % 2 != 0 || i % 2 != 0 && j % 2 == 0;
-				Point p = new Point((75 * i) + 50, (75 * j) + 1);
-				char col = (char) (i + 65);
-				if (j < 3 && b)
-					board[i][j] = new Tile(j, col, p, Color.LIGHT_GRAY, 75, false, PieceType.REDPIECE); //true/false determines highlight
-				if (j > 4 && b) board[i][j] = new Tile(j, col, p, Color.LIGHT_GRAY, 75, false, PieceType.BLACKPIECE);
-			}
-		}
-		this.repaint();
 	}
 }

@@ -13,10 +13,11 @@ public class CheckersPiece {
 	private boolean king;
 	private Color outer;
 	private Color inner;
-	int row;
-	char col;
+	int row, col;
+//	char col;
+	private PieceType pieceType;
 
-	public CheckersPiece(int row, char col, Point p, Boolean red, Boolean king) {
+	public CheckersPiece(int row, int col, Point p, Boolean red, Boolean king, PieceType pieceType) {
 		this.p = p;
 		this.king = king;
 		this.row = row;
@@ -29,13 +30,36 @@ public class CheckersPiece {
 			outer = Color.BLACK;
 			inner = new Color(74, 72, 72);
 		}
+
+		this.pieceType = pieceType;
 	}
 
 	public int getRow() {
 		return row;
 	}
 
-	public char getCol() {
+	public PieceType getPieceType() {
+		if (king) {
+			if (outer == Color.RED) {
+				pieceType = PieceType.REDKING;
+			} else {
+				pieceType =  PieceType.BLACKKING;
+			}
+		} else {
+			if (outer == Color.RED) {
+				pieceType = PieceType.REDPIECE;
+			} else {
+				pieceType = PieceType.BLACKPIECE;
+			}
+		}
+		return pieceType;
+	}
+
+	public void setPieceType(PieceType pt) {
+		pieceType = pt;
+	}
+
+	public int getCol() {
 		return col;
 	}
 
@@ -80,7 +104,8 @@ public class CheckersPiece {
 
 	@Override
 	public String toString() {
-		return super.toString();
+		return "Row: " + row + " - Col " + col + " - piecetype: " +
+				pieceType;
 	}
 }
 

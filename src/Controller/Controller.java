@@ -121,11 +121,16 @@ public class Controller {
             }
 
             // Model
-            Move move = new Move(message.getCp1(), message.getCp2());
+            Move move = new Move(message.getCp1().getRow(), message.getCp1().getCol(),
+                    message.getTileToMove().getRow(), message.getTileToMove().getCol());
 
             // Make a move.
-            model.makeMove(move);
 
+//            System.out.println("Selected Piece to move: " + message.getCp1());
+//            System.out.println("Piece position to move" + message.getTileToMove());
+            model.doClickSquare(move);
+
+            // Next Player to Act
             updateGame("MOVE");
 
             return ValveResponse.EXECUTED;
@@ -137,8 +142,6 @@ public class Controller {
             if (message.getClass() != ShowHighlightMessage.class) {
                 return ValveResponse.MISS;
             }
-
-
             // Model
             model.showHighlight(message.getCp1());
 
@@ -147,6 +150,4 @@ public class Controller {
             return ValveResponse.EXECUTED;
         }
     }
-
-
 }

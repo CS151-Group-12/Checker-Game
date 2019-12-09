@@ -7,9 +7,7 @@ import java.awt.Point;
 
 // will contain UI and logic for each tile square
 public class Tile extends JComponent {
-	private static final String NONE = "NONE";
-	private int row;
-	private char col;
+	private int row, col;
 	private Point coords;
 	private Color tileColor;
 	private int size;
@@ -17,8 +15,8 @@ public class Tile extends JComponent {
 	private CheckersPiece cp;
 	private PieceType s;
 
-	public Tile(int row, char col, Point p, Color c, int Size, boolean Highlight, PieceType s) {
-		coords = p;
+	public Tile(int row, int col, Color c, int Size, boolean Highlight, PieceType s) {
+		coords = new Point((75 * col) + 50, (75 * row) + 1);;
 		tileColor = c;
 		size = Size;
 		highlight = Highlight;
@@ -31,20 +29,24 @@ public class Tile extends JComponent {
 	void setCurrentCheckerPiece() {
 		switch (s) {
 			case BLACKPIECE:
-				cp = new CheckersPiece(row, col, coords, false, false);
+				cp = new CheckersPiece(row, col, coords, false, false, PieceType.BLACKPIECE);
 				break;
 			case BLACKKING:
-				cp = new CheckersPiece(row, col, coords, false, true);
+				cp = new CheckersPiece(row, col, coords, false, true, PieceType.BLACKKING);
 				break;
 			case REDPIECE:
-				cp = new CheckersPiece(row, col, coords, true, false);
+				cp = new CheckersPiece(row, col, coords, true, false, PieceType.REDPIECE);
 				break;
 			case REDKING:
-				cp = new CheckersPiece(row, col, coords, true, true);
+				cp = new CheckersPiece(row, col, coords, true, true, PieceType.REDKING);
 				break;
 			case NONE:
 				break;
 		}
+	}
+
+	public void setCheckerPiece(CheckersPiece cp) {
+		this.cp = cp;
 	}
 
 	public void setHighlight(Boolean b) {
@@ -71,29 +73,18 @@ public class Tile extends JComponent {
 
 	}
 
-	// used to find the location of pieces on the board
-	public void getStatus(){
-
-	}
-
-	// used to find the possible moves
-	public boolean getHighlight() {
-		return false;
-	}
-
-	// used to find out whether the tile has an existing checker piece in it
-	// can handle killing here
-	public void containsPiece(){
-
-	}
-
-	// used to set the color of the tile depending on whether a checker piece can be moved there or not
-	public void tileColor(){
-
-	}
-
 	public CheckersPiece getCp() {
 		return cp;
+	}
+
+	public PieceType getCheckerPieceType() {
+		if (cp != null)
+			return cp.getPieceType();
+		return null;
+	}
+
+	public void setCheckerPieceType(PieceType pt) {
+		cp.setPieceType(pt);
 	}
 
 	public Color getTileColor() {
@@ -108,26 +99,24 @@ public class Tile extends JComponent {
 		return coords;
 	}
 
+	public int getRow() {
+		return row;
+	}
+
+	public int getCol() {
+		return col;
+	}
+
 	public boolean isHighlight() {
 		return highlight;
 	}
 
 	@Override
 	public String toString() {
-
-		int newRow = row + 1;
-		return "Pos: " + col + newRow + " - "
+		return "[Tile Object] Col = " + col + " Row = " + row
+				+ " - "
 				+ "Highlight: " + highlight + " - "
 				+ "Piece: " + cp + " - "
 				+ "Type: " + s;
 	}
-
-	//	   public boolean contains(Point2D p)
-//	   {
-//	      return x <= p.getX() && p.getX() <= x + width
-//	         && y <= p.getY() && p.getY() <= y + width / 2;
-//	   }
-	//need coordinates
-
-	//need highlight/black/black king/red king/none/
 }

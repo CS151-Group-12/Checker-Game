@@ -10,7 +10,4 @@ public class Player {
     Player() {
         isTurn = false;
     }
-
-
-
 }

@@ -9,6 +9,7 @@ import java.util.ArrayList;
  */
 public class GameInfo {
 
+    Model model;
 
     private ArrayList<Player> playerList;
     private ArrayList<Move> moveList;
@@ -26,6 +27,7 @@ public class GameInfo {
         playerList = model.getPlayerList();
         moveList = model.getMoveList();
         board = model.getBoard();
+        selectedPiece = model.getSelectedPiece();
     }
 
     public ArrayList<Player> getPlayerList() {

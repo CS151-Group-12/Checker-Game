@@ -2,6 +2,7 @@ package Model;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Vector;
 
 /**
  * Main Class that store all Game Logic, and information
@@ -10,15 +11,15 @@ public class Model {
 
     private ArrayList<Player> playerList;
     private ArrayList<Move> moveList;
-    private gameData board;
     private Tile[][] boardTiles;
     private Move[] legalMoves;
     private int selectedRow;
     private int selectedCol;
-    private Player currentPlayer;
-    private int currentPlayerPosition;
+    private int currentPlayerPosition = 0;
 
     private CheckersPiece selectedPiece;
+    private Tile selectedTile;
+
 
     /**
      * Start the Game
@@ -28,124 +29,102 @@ public class Model {
         moveList = new ArrayList<>();
         boardTiles = new Tile[8][8];
         setBoard(boardTiles);
-
-//        System.out.println("Model init");
-//        Point p = new Point((75 * 3) + 50, (75 * 5) + 1);
-//        CheckersPiece c1 = new CheckersPiece(5, 'D', p,false, false);
-//        CheckersPiece c2 = new CheckersPiece(5, 'D', p,false, false);
-//
-//        CheckersPiece c3 = new CheckersPiece(5, 'D', p,false, false);
-//        CheckersPiece c4 = new CheckersPiece(5, 'D', p,false, false);
-//        Move a = new Move(c1, c2);
-//        Move b = new Move(c2, c3);
-//        moveList.add(a);
-//        moveList.add(b);
-//        System.out.println("Model initialized");
-//        System.out.println(moveList.size());
     }
 
-    /**
-     * Initialize the boards for the model
-     * @param board
-     */
-    public void setBoard(Tile[][] board) {
-        for (int i = 0; i < 8; i++) {
-            for (int j = 0; j < 8; j++) {
-                Point p = new Point((75 * i) + 50, (75 * j) + 1);
-                boolean b = (i % 2 != 0 && j % 2 == 0) || (i % 2 == 0 && j % 2 != 0);
+    public void setBoard(Tile[][] boardTiles) {
+        for (int row = 0; row < 8; row++) {
+            for (int col = 0; col < 8; col++) {
 
-                char col = (char) (j + 65);
-
-                if (j >= 5 && b)
-                    board[i][j] = new Tile(i, col, p, Color.LIGHT_GRAY, 75, false, PieceType.BLACKPIECE); //true/false determines highlight
-                else if (j < 3 && b)
-                    board[i][j] = new Tile(i, col, p, Color.LIGHT_GRAY, 75, false, PieceType.REDPIECE);
-                else {
-                    if (b)
-                        board[i][j] = new Tile(i, col, p, Color.LIGHT_GRAY, 75, false, PieceType.NONE); //true/false determines highlight
+                if (row % 2 == col % 2) {
+                    if (row < 3)
+                        boardTiles[row][col] = new Tile(row, col, Color.LIGHT_GRAY, 75, false, PieceType.BLACKPIECE);
+                    else if (row > 4)
+                        boardTiles[row][col] = new Tile(row, col, Color.LIGHT_GRAY, 75, false, PieceType.REDPIECE);
                     else
-                        board[i][j] = new Tile(i, col, p, Color.WHITE, 75, false, PieceType.NONE);
+                        boardTiles[row][col] = new Tile(row, col, Color.LIGHT_GRAY, 75, false, PieceType.NONE);
+                } else {
+                    boardTiles[row][col] = new Tile(row, col, Color.WHITE, 75, false, PieceType.NONE);
                 }
             }
         }
     }
 
-    public void makeMove(Move move) {
-        gameData.makeMove(move.fromRow, move.fromCol, move.toRow, move.toCol);
-
-        // Add the MoveList to display in the history panel.
-        // Move b = new Move(c2, c3);
-        // moveList.add(a);
-    }
 
     // will show the possible moves
     public void showHighlight(CheckersPiece cp) {
+        selectedTile = boardTiles[cp.getRow()][cp.getCol()];
+        if (selectedTile.isHighlight()) {
+            System.out.println("Turn off");
+            selectedPiece = null;
 
-        System.out.println("Model Called showHighlight");
-        System.out.println(cp.getRow());
-        System.out.println(cp.getCol() -65);
-        Tile currentTile = boardTiles[cp.getRow()][(cp.getCol() - 65)];
-        currentTile.setHighlight(!currentTile.isHighlight());
-    }
-
-    public void doClickSquare(int row, int col) {
-        for (int i = 0; i < legalMoves.length; i++)
-            if (legalMoves[i].fromRow == row && legalMoves[i].fromCol == col) {
-                selectedRow = row;
-                selectedCol = col;
-                return;
-            }
-
-        if (selectedRow < 0) {
-            return;
+        } else {
+            System.out.println("Turn on");
+            selectedPiece = cp;
+            legalMoves = getLegalMoves(cp);
         }
 
-        for (int i = 0; i < legalMoves.length; i++)
-            if (legalMoves[i].fromRow == selectedRow && legalMoves[i].fromCol == selectedCol
-                    && legalMoves[i].toRow == row && legalMoves[i].toCol == col) {
+        selectedTile.setHighlight(!selectedTile.isHighlight());
+    }
+
+    public void turnOffHighlight() {
+        selectedPiece = null;
+    }
+
+    public void doClickSquare(Move move) {
+        int row = move.getToRow();
+        int col = move.getToCol();
+//        for (int i = 0; i < legalMoves.length; i++) {
+//            if (legalMoves[i].fromRow == selectedPiece.getRow()
+//                    && legalMoves[i].fromCol == selectedPiece.getCol()) {
+//                selectedRow = row;
+//                selectedCol = col;
+//                return;
+//            }
+//        }
+//
+//        if (selectedRow < 0) {
+//            return;
+//        }
+        System.out.println("DoClickSquare: " + selectedPiece.getPieceType());
+
+        for (int i = 0; i < legalMoves.length; i++) {
+            if (
+                legalMoves[i].fromRow == selectedPiece.getRow() &&
+                legalMoves[i].fromCol == selectedPiece.getCol() &&
+                legalMoves[i].toRow == row &&
+                legalMoves[i].toCol == col
+            ) {
+                System.out.println("DoClickSquare: " + legalMoves[i]);
                 doMakeMove(legalMoves[i]);
                 return;
             }
+        }
     }
 
     public void doMakeMove(Move move) {
-        board.makeMove(move);
-        board.makeMove(move);
-      
+        System.out.println("[doMakeMove]: " + move.toString());
+        makeMove(move);
+//        makeMove(move);
+
         if (move.isJump()) {
-            legalMoves = board.getLegalJumpsFrom(currentPlayerPosition, move.toRow, move.toCol);
+            System.out.println("move is a jump");
+            legalMoves = getLegalJumpsFrom(selectedPiece.getPieceType(), move.toRow, move.toCol);
             if (legalMoves != null) {
-//                if (currentPlayerPosition == gameData.RED)
-//                    message.setText("RED:  You must continue jumping.");
-//                else
-//                    message.setText("BLACK:  You must continue jumping.");
                 selectedRow = move.toRow;  // Since only one piece can be moved, select it.
                 selectedCol = move.toCol;
-
                 return;
             }
         }
 
-        if (currentPlayerPosition == gameData.RED) {
-            currentPlayerPosition = gameData.BLACK;
-            legalMoves = board.getLegalMoves(currentPlayerPosition);
-//            if (legalMoves == null)
-//                message.gameOver("BLACK has no moves.  RED wins.");
-//            else if (legalMoves[0].isJump())
-//                message.setText("BLACK:  Make your move.  You must jump.");
-//            else
-//                message.setText("BLACK:  Make your move.");
+        if (currentPlayerPosition == 0) {
+            currentPlayerPosition = 1;
+            legalMoves = getLegalMoves(selectedPiece);
         }
         else {
-            currentPlayerPosition = gameData.RED;
-            legalMoves = board.getLegalMoves(currentPlayerPosition);
-//            if (legalMoves == null)
-//                message.gameOver("RED has no moves.  BLACK wins.");
-//            else if (legalMoves[0].isJump())
-//                message.setText("RED:  Make your move.  You must jump.");
-//            else
-//                message.setText("RED:  Make your move.");
+            currentPlayerPosition = 0;
+            legalMoves = getLegalMoves(selectedPiece);
         }
+        System.out.println("Current Player" + currentPlayerPosition);
 
         selectedRow = -1;
 
@@ -162,14 +141,194 @@ public class Model {
                 selectedCol = legalMoves[0].fromCol;
             }
         }
+
+        // Add to history of Move
+        moveList.add(new Move(move.getFromRow(), move.getFromCol(), move.getToRow(), move.getToCol()));
+
+        // Unhighlight
+        selectedTile.setHighlight(!selectedTile.isHighlight());
     }
+
+    public void makeMove(Move move) {
+        System.out.println("[MakeMove 1]: " + boardTiles[move.fromRow][move.fromCol].getCheckerPieceType());
+        makeMove(move.fromRow, move.fromCol, move.toRow, move.toCol);
+    }
+
+
+    public void makeMove(int fromRow, int fromCol, int toRow, int toCol) {
+
+        Tile fromTile = boardTiles[fromRow][fromCol];
+
+        System.out.println("[MakeMove 2]: " + boardTiles[fromRow][fromCol].getCheckerPieceType());
+
+        // re-set toTile
+        boardTiles[toRow][toCol] = new Tile(toRow, toCol, Color.LIGHT_GRAY, 75, false, fromTile.getCheckerPieceType());
+        boardTiles[fromRow][fromCol] = new Tile(fromRow, fromCol, Color.LIGHT_GRAY, 75, false, PieceType.NONE);
+
+        if (fromRow - toRow == 2 || fromRow - toRow == -2) {
+            System.out.println("The move is a jump.  Remove the jumped piece from the board.");
+
+            int jumpRow = (fromRow + toRow) / 2;  // Row of the jumped piece.
+            int jumpCol = (fromCol + toCol) / 2;  // Column of the jumped piece.
+            boardTiles[jumpRow][jumpCol].setCheckerPieceType(PieceType.NONE);
+        }
+        // Convert to a King
+        if (toRow == 0 &&
+                boardTiles[toRow][toCol].getCheckerPieceType() == PieceType.REDPIECE)
+            boardTiles[toRow][toCol].setCheckerPieceType(PieceType.REDKING);
+        if (toRow == 7 &&
+                boardTiles[toRow][toCol].getCheckerPieceType() == PieceType.BLACKPIECE)
+            boardTiles[toRow][toCol].setCheckerPieceType(PieceType.BLACKKING);
+    }
+
+
+    public Move[] getLegalMoves(CheckersPiece checkersPiece) {
+
+        PieceType pt = checkersPiece.getPieceType();
+
+        if (pt != PieceType.REDPIECE && pt != PieceType.BLACKPIECE)
+            return null;
+
+        PieceType playerKing;  // The constant representing a King belonging to player.
+        if (pt == PieceType.REDPIECE)
+            playerKing = PieceType.REDKING;
+        else
+            playerKing = PieceType.BLACKKING;
+
+        Vector<Move> moves = new Vector<>();  // Moves will be stored in this vector.
+
+        for (int row = 0; row < 8; row++) {
+            for (int col = 0; col < 8; col++) {
+                if (boardTiles[row][col].getCheckerPieceType() == pt ||
+                        boardTiles[row][col].getCheckerPieceType() == playerKing) {
+                    if (canJump(pt, row, col, row + 1, col + 1, row + 2, col + 2))
+                        moves.addElement(new Move(row, col, row+2, col+2));
+                    if (canJump(pt, row, col, row-1, col+1, row-2, col+2))
+                        moves.addElement(new Move(row, col, row-2, col+2));
+                    if (canJump(pt, row, col, row+1, col-1, row+2, col-2))
+                        moves.addElement(new Move(row, col, row+2, col-2));
+                    if (canJump(pt, row, col, row-1, col-1, row-2, col-2))
+                        moves.addElement(new Move(row, col, row-2, col-2));
+                }
+            }
+        }
+
+        System.out.println("[Model-GetLegalMove]: " + pt.toString());
+        if (moves.size() == 0) {
+            for (int row = 0; row < 8; row++) {
+                for (int col = 0; col < 8; col++) {
+
+                    if (boardTiles[row][col].getCheckerPieceType() == pt ||
+                            boardTiles[row][col].getCheckerPieceType() == playerKing) {
+                        if (canMove(pt, row, col,row + 1,col + 1))
+                            moves.addElement(new Move(row, col,row + 1,col + 1));
+                        if (canMove(pt, row, col,row - 1,col+1))
+                            moves.addElement(new Move(row, col,row-1,col+1));
+                        if (canMove(pt, row, col,row + 1,col - 1))
+                            moves.addElement(new Move(row, col,row + 1,col - 1));
+                        if (canMove(pt, row, col,row - 1,col-1))
+                            moves.addElement(new Move(row, col,row - 1,col - 1));
+                    }
+                }
+            }
+        }
+
+        if (moves.size() == 0)
+            return null;
+        else {
+            Move[] moveArray = new Move[moves.size()];
+            for (int i = 0; i < moves.size(); i++)
+                moveArray[i] = moves.elementAt(i);
+            return moveArray;
+        }
+
+    }  // end getLegalMoves
+
+
+    public Move[] getLegalJumpsFrom(PieceType pieceType, int row, int col) {
+        if (pieceType != PieceType.REDPIECE && pieceType != PieceType.BLACKPIECE)
+            return null;
+        PieceType playerKing;  // The constant representing a King belonging to player.
+        if (pieceType == PieceType.REDPIECE)
+            playerKing = PieceType.REDKING;
+        else
+            playerKing = PieceType.BLACKKING;
+        Vector<Move> moves = new Vector<>();  // The legal jumps will be stored in this vector.
+        if (boardTiles[row][col].getCheckerPieceType() == pieceType || boardTiles[row][col].getCheckerPieceType() == playerKing) {
+            if (canJump(pieceType, row, col, row+1, col+1, row+2, col+2))
+                moves.addElement(new Move(row, col, row+2, col+2));
+            if (canJump(pieceType, row, col, row-1, col+1, row-2, col+2))
+                moves.addElement(new Move(row, col, row-2, col+2));
+            if (canJump(pieceType, row, col, row+1, col-1, row+2, col-2))
+                moves.addElement(new Move(row, col, row+2, col-2));
+            if (canJump(pieceType, row, col, row-1, col-1, row-2, col-2))
+                moves.addElement(new Move(row, col, row-2, col-2));
+        }
+        if (moves.size() == 0)
+            return null;
+        else {
+            Move[] moveArray = new Move[moves.size()];
+            for (int i = 0; i < moves.size(); i++)
+                moveArray[i] = moves.elementAt(i);
+            return moveArray;
+        }
+    }  // end getLegalMovesFrom()
+
+
+    private boolean canJump(PieceType pieceType, int r1, int c1, int r2, int c2, int r3, int c3) {
+
+        if (r3 < 0 || r3 >= 8 || c3 < 0 || c3 >= 8)
+            return false;  // (r3,c3) is off the board.
+
+        if (boardTiles[r3][c3].getCheckerPieceType() != PieceType.NONE)
+            return false;  // (r3,c3) already contains a piece.
+
+        if (pieceType == PieceType.REDPIECE) {
+            if (boardTiles[r1][c1].getCheckerPieceType() == PieceType.REDPIECE && r3 > r1)
+                return false;  // Regular red piece can only move  up.
+            if (boardTiles[r2][c2].getCheckerPieceType() != PieceType.BLACKPIECE && boardTiles[r2][c2].getCheckerPieceType() != PieceType.BLACKKING)
+                return false;  // There is no black piece to jump.
+            return true;  // The jump is legal.
+        }
+        else {
+            if (boardTiles[r1][c1].getCheckerPieceType() == PieceType.BLACKPIECE && r3 < r1)
+                return false;  // Regular black piece can only move downn.
+            if (boardTiles[r2][c2].getCheckerPieceType() != PieceType.REDPIECE && boardTiles[r2][c2].getCheckerPieceType() != PieceType.REDKING)
+                return false;  // There is no red piece to jump.
+            return true;  // The jump is legal.
+        }
+
+    }  // end canJump()
+
+
+    private boolean canMove(PieceType pieceType, int r1, int c1, int r2, int c2) {
+
+        if (r2 < 0 || r2 >= 8 || c2 < 0 || c2 >= 8) {
+            return false;  // (r2,c2) is off the board.
+        }
+
+        if (
+                boardTiles[r2][c2].containsChecker()) {
+            return false;  // (r2,c2) already contains a piece.
+        }
+
+        if (pieceType == PieceType.REDPIECE) {
+
+            if (boardTiles[r1][c1].getCheckerPieceType() == PieceType.REDPIECE && r2 > r1)
+                return false;  // Regualr red piece can only move down.
+//            System.out.println("[Model-CanMove] case 3: (" + r1 + ", " + c1 + ") - (" + r2 + ", " + c2 + ")");
+            return true;  // The move is legal.
+        }else {
+            if (boardTiles[r1][c1].getCheckerPieceType() == PieceType.BLACKPIECE && r2 < r1)
+                return false;  // Regular black piece can only move up.
+//            System.out.println("[Model-CanMove] case 4: (" + r1 + ", " + c1 + ") - (" + r2 + ", " + c2 + ")");
+
+            return true;  // The move is legal.
+        }
+    }  // end canMove()
 
     public int getCurrentPlayerPosition() {
         return currentPlayerPosition;
-    }
-
-    public Player getCurrentPlayer() {
-        return currentPlayer;
     }
 
     public CheckersPiece getSelectedPiece() {

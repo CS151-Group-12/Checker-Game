@@ -41,9 +41,8 @@ public class HistoryPanel extends JPanel {
 
 	public void setHistoryPanel(GameInfo gameInfo) {
 		this.gameInfo = gameInfo;
-		System.out.println(gameInfo.getMoveList().size());
 		for(Move m : gameInfo.getMoveList()) {
-			String moveString = m.getPrevPosition().getRow() + "->" + m.getCurrentPosition().getRow() ;
+			String moveString = m.getFromRow() + "-" + m.getFromCol() + " -> " + m.getToRow() + "-" + m.getToCol();
 			lm.addElement(moveString);
 		}
 	}
