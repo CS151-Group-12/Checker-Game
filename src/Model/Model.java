@@ -21,6 +21,7 @@ public class Model {
 
     private int isWinner = -1;
 
+    private boolean resetGame;
 
     /**
      * Start the Game
@@ -34,6 +35,7 @@ public class Model {
         selectedPiece = null;
         selectedTile = null;
         currentPlayerPosition = 0;
+        resetGame = true;
     }
 
     private void setBoard(Tile[][] boardTiles) {
@@ -57,6 +59,7 @@ public class Model {
 
     // will show the possible moves
     public void showHighlight(CheckersPiece cp) {
+        resetGame = false;
         selectedTile = boardTiles[cp.getRow()][cp.getCol()];
         if (selectedTile.isHighlight()) {
             selectedPiece = null;
@@ -302,5 +305,9 @@ public class Model {
 
     public Tile[][] getBoard() {
         return boardTiles;
+    }
+
+    public boolean isResetGame() {
+        return resetGame;
     }
 }

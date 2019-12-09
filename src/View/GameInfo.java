@@ -14,6 +14,7 @@ public class GameInfo {
     private CheckersPiece selectedPiece;
     private int playerTurn, winner;
 
+    private boolean isReset;
     /**
      * View will display the gameInfo based on the updated Model
      *
@@ -25,6 +26,7 @@ public class GameInfo {
         selectedPiece = model.getSelectedPiece();
         playerTurn = model.getCurrentPlayerPosition();
         winner = model.isWinner();
+        isReset = model.isResetGame();
     }
 
     ArrayList<Move> getMoveList() {
@@ -41,5 +43,9 @@ public class GameInfo {
     }
     int getWinner() {
         return winner;
+    }
+
+    public boolean isReset() {
+        return isReset;
     }
 }
