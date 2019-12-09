@@ -1,6 +1,9 @@
 package View;
 
 import Message.Message;
+
+
+import Message.Message;
 import Model.Move;
 
 import java.awt.Color;
@@ -112,7 +115,19 @@ public class HistoryPanel extends JPanel {
 		header.setAlignmentX(JLabel.CENTER_ALIGNMENT);
 		Font font = new Font("integerfont", Font.PLAIN, 20);
 		header.setFont(font);
-
+		
+		JLabel winner = new JLabel("RED WINS!");
+		winner.setAlignmentX(JLabel.CENTER_ALIGNMENT);
+		Font font4 = new Font("integerfont", Font.PLAIN, 30);
+		winner.setForeground(Color.RED);
+		
+		//to change to black wins
+//		winner.setText("BLACK WINS!");
+//		winner.setForeground(Color.BLACK);
+		
+		winner.setFont(font4);
+		
+		container.add(winner);
 		container.add(header);
 
 		UndoRedo.add(playerturn);
@@ -121,13 +136,15 @@ public class HistoryPanel extends JPanel {
 
 		JList<String> list = new JList<>();
 		list.setModel(lm);
+		
+		JScrollPane s = new JScrollPane(list);
+		s.setBorder(BorderFactory.createMatteBorder(2, 0, 0, 1, Color.BLACK));
 
 		list.setPreferredSize(new Dimension(200, 500));
 		list.setFixedCellHeight(50);
 		list.setFixedCellWidth(200);
-		list.setBorder(BorderFactory.createMatteBorder(2, 0, 0, 1, Color.BLACK));
 
-		this.add(list);
+		this.add(s);
 	}
 
 	@Override
