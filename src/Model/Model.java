@@ -93,6 +93,7 @@ public class Model {
 
         if (move.isJump()) {
             legalMoves = getLegalJumpsFrom(selectedPiece.getPieceType(), move.toRow, move.toCol);
+//            makeMove(move);
         }
 
         if (currentPlayerPosition == 0) {
@@ -136,12 +137,9 @@ public class Model {
                 totalRedCount--;
             else
                 totalBlackCount--;
-
-
-
             boardTiles[jumpRow][jumpCol] = new Tile(jumpRow, jumpCol, Color.LIGHT_GRAY, 75, false, PieceType.NONE);
-
         }
+
         // Convert to a King
         if (toRow == 0 &&
                 boardTiles[toRow][toCol].getCheckerPieceType() == PieceType.REDPIECE) {
